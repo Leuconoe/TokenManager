@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Nested Gradle build output (not covered by root /build/)
+android/build/
