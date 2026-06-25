@@ -1,0 +1,79 @@
+name: token_manager
+description: "Offline token-metadata vault with device-bound encryption (no token values stored)."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Localization (ARB + gen-l10n)
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Local encrypted DB (SQLCipher-backed SQLite via Drift)
+  drift: ^2.18.0
+  sqlcipher_flutter_libs: ^0.6.4
+  sqlite3: ^2.4.0
+  path: ^1.9.0
+  path_provider: ^2.1.3
+
+  # Secure key storage — backed by Android Keystore (no key material in code)
+  flutter_secure_storage: ^9.2.2
+
+  # Backup crypto — Argon2id KDF + AES-256-GCM (pure Dart, no native build)
+  cryptography: ^2.7.0
+
+  # IDs
+  uuid: ^4.4.0
+
+  # Biometric / device-credential gate
+  local_auth: ^2.3.0
+
+  # Local scheduled notifications + background scan
+  flutter_local_notifications: ^17.2.2
+  workmanager: ^0.9.0+3
+  timezone: ^0.9.4
+
+  # Backup file IO (SAF save / pick) + share sheet
+  file_picker: ^11.0.0
+  share_plus: ^10.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  drift_dev: ^2.18.0
+  build_runner: ^2.4.11
+  flutter_lints: ^4.0.0
+  # Icon generation
+  image: ^4.2.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  generate: true   # enables gen-l10n (AppLocalizations)
+
+# App launcher icon (shield + keyhole). Generate with:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#3F51B5"
+  adaptive_icon_foreground: "assets/icon/foreground.png"
+  remove_alpha_ios: true
+
+# NOTE: Drift uses code generation. After `flutter pub get`, run:
+#   dart run build_runner build --delete-conflicting-outputs
+# to generate lib/core/db/app_database.g.dart
+#
+# IMPORTANT (SQLCipher): do NOT also depend on sqlite3_flutter_libs —
+# it conflicts with sqlcipher_flutter_libs (two SQLite binaries linked).
