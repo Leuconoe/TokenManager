@@ -39,13 +39,20 @@ dependencies:
   local_auth: ^2.3.0
 
   # Local scheduled notifications + background scan
-  flutter_local_notifications: ^17.2.2
+  flutter_local_notifications: ^18.0.0   # v18+ adds Windows support
   workmanager: ^0.9.0+3
   timezone: ^0.9.4
 
   # Backup file IO (SAF save / pick) + share sheet
   file_picker: ^11.0.0
   share_plus: ^10.0.2
+
+  # Desktop (Windows) runtime: tray-resident + launch at login.
+  # No Android impl — unused there, guarded by Platform checks.
+  window_manager: ^0.4.3
+  tray_manager: ^0.3.2
+  launch_at_startup: ^0.5.1
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +67,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true   # enables gen-l10n (AppLocalizations)
+  assets:
+    - assets/icon/app_icon.ico   # Windows system tray icon (tray_manager)
 
 # App launcher icon (shield + keyhole). Generate with:
 #   dart run flutter_launcher_icons

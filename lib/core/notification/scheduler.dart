@@ -1,5 +1,7 @@
 // Design Ref: §F5, §F6 — local notification publishing + background scan registration.
 
+import 'dart:io' show Platform;
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -17,10 +19,12 @@ class NotificationScheduler {
       : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    // OS notifications via flutter_local_notifications are Android-only here.
+    // (Windows toast needs the separate flutter_local_notifications_windows;
+    // desktop surfaces expiry via the system-tray tooltip instead — win-3.)
+    if (!Platform.isAndroid) return;
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    await _plugin.initialize(
-      const InitializationSettings(android: android),
-    );
+    await _plugin.initialize(const InitializationSettings(android: android));
     await _plugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
@@ -48,14 +52,15 @@ class NotificationScheduler {
     ),
   );
 
-  /// Emits notifications for expired / expiring / (optionally) no-expiry groups.
-  /// [warnNoExpiry] gated by Settings interval (computed by caller).
-  /// [l10n] localizes notification text (loaded by the background isolate).
+  /// Emits OS notifications (Android only) for expired / expiring / (optionally)
+  /// no-expiry groups. [warnNoExpiry] gated by Settings interval (by caller).
+  /// [l10n] localizes notification text (loaded by the caller, no context).
   Future<void> notifyFromScan(
     Map<TokenStatus, List<TokenEntry>> scan, {
     required bool warnNoExpiry,
     required AppLocalizations l10n,
   }) async {
+    if (!Platform.isAndroid) return; // desktop uses tray tooltip (win-3)
     final expired = scan[TokenStatus.expired] ?? const [];
     final soon = scan[TokenStatus.expiringSoon] ?? const [];
     final noExpiry = scan[TokenStatus.noExpiry] ?? const [];

@@ -134,7 +134,8 @@ dependencies:
 ## 9.1 진행 현황 (2026-06-12)
 
 - **win-1 언어 선택 — 완료** ✅ (LocaleController + SettingsRepository.localeTag + Settings UI + ARB 2키 7로케일 + main locale/영어폴백 배선). Android analyze 0 / test 11 / 빌드·실행 OK.
-- **win-2 부분 — workmanager 호출 `Platform.isAndroid` 가드 완료**(데스크톱 MissingPlugin 회피). ScanScheduler Port 본구현은 win-3과 함께.
+- **win-2 완료** ✅: ScanScheduler Port + ScanService 공통화. AndroidWorkmanagerScheduler(기존 이관) + DesktopTrayScheduler. workmanager_callback도 ScanService 사용으로 리팩터.
+- **win-3 완료** ✅: DesktopTrayScheduler(launch_at_startup 로그인 자동실행 + tray_manager 트레이 상주 + window_manager 닫기=트레이 최소화 + 6h Timer 재스캔). main에서 데스크톱 window init. **Windows release 빌드 + 실행 검증**(트레이 init 무크래시, Windows Hello 잠금 게이트 동작, 자동실행 레지스트리 등록 확인). 알림: OS 토스트는 Android 전용(flutter_local_notifications 18, `windows:` 미지원), **Windows는 트레이 툴팁으로 만료 요약**(expired/soon/no-expiry). 리치 Windows 토스트는 flutter_local_notifications_windows 후속.
 - **win-4 Windows 빌드 검증 — 타당성 확정** ✅ (Debug 빌드 성공 + exe 실행 확인). 해결한 빌드 환경 이슈 체인:
   1. **nuget.org 소스 누락**: `%APPDATA%\NuGet\NuGet.Config`의 `<packageSources>`가 비어 있어 온라인 소스 0개 → `dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org`로 해결. (local_auth_windows의 WIL nuget 복원 가능해짐)
   2. **local_auth_windows coroutine**: 최신 MSVC(14.5x)가 `<experimental/coroutine>` 하드에러 → `windows/CMakeLists.txt`에 `add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)` 추가로 해결.

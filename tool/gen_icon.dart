@@ -26,7 +26,12 @@ void main() {
   _drawShield(fg, inset: 300, shield: white, keyhole: transparent);
   File('assets/icon/foreground.png').writeAsBytesSync(img.encodePng(fg));
 
-  stdout.writeln('Wrote assets/icon/icon.png and assets/icon/foreground.png');
+  // --- Windows tray icon (.ico, 256px downscaled set) ---
+  final ico = img.copyResize(icon, width: 256, height: 256);
+  File('assets/icon/app_icon.ico').writeAsBytesSync(img.encodeIco(ico));
+
+  stdout.writeln(
+      'Wrote assets/icon/icon.png, foreground.png, app_icon.ico');
 }
 
 void _drawShield(

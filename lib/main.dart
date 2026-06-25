@@ -5,14 +5,15 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:window_manager/window_manager.dart';
 
-import 'core/notification/workmanager_callback.dart';
 import 'core/providers.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/settings/locale_controller.dart';
 import 'features/tokens/token_list_page.dart';
 import 'l10n/app_localizations.dart';
+
+bool get _isDesktop => Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,15 +22,31 @@ Future<void> main() async {
   // (Applied natively in MainActivity; flag here documents intent.)
 
   final container = ProviderContainer();
+
+  // Desktop: tray-resident window shell.
+  if (_isDesktop) {
+    await windowManager.ensureInitialized();
+    await windowManager.waitUntilReadyToShow(
+      const WindowOptions(
+        size: Size(440, 760),
+        title: 'TokenManager',
+        titleBarStyle: TitleBarStyle.normal,
+      ),
+      () async {
+        await windowManager.show();
+        await windowManager.focus();
+      },
+    );
+  }
+
   await container.read(notificationSchedulerProvider).init();
 
-  // Background periodic scan is Android-only (workmanager). Desktop uses an
-  // autostart + tray scheduler (win-3); guarded here to keep other platforms
-  // from hitting MissingPluginException.
-  if (Platform.isAndroid) {
-    await Workmanager().initialize(callbackDispatcher);
-    await container.read(notificationSchedulerProvider).registerDailyScan();
-  }
+  // Platform-branched scan scheduling (Android=WorkManager, Desktop=tray+startup).
+  final scheduler = container.read(scanSchedulerProvider);
+  await scheduler.ensureScheduled();
+  // Desktop has no background worker → scan on launch. Android relies on the
+  // periodic WorkManager task (avoids notification spam on every app open).
+  if (_isDesktop) await scheduler.runOnce();
 
   // Load the saved language (null = follow system, English fallback).
   await container.read(localeControllerProvider.notifier).load();
