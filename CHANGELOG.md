@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.1.1
+
+- **Release signing**: Android release builds are now signed with a real release
+  key (stored as GitHub Secrets; keystore kept local & gitignored).
+- **Update check**: manual "Check for updates" in Settings (app + extension)
+  compares the current version against the latest GitHub Release. The app adds
+  the INTERNET permission used *only* for this manual check — token data is
+  never transmitted.
+- **Backup merge by title**: merge is keyed by service name; on a real
+  difference (e.g. local has an expiry, imported does not) a per-conflict prompt
+  lets you keep local or use imported.
+- **Separate timings**: expiry warning lead time (7/14/30 days before) is now
+  distinct from the no-expiry cadence (off/15/30 days), on both app and extension.
+- Extension: i18n (7 locales + selector), active-tab autofill, background
+  expiry alerts (`alarms`), no-expiry warning.
+- Token entries gained a **URL** field.
+
 ## v0.0.1
 
 First public build. An offline token-metadata vault that **never stores token
