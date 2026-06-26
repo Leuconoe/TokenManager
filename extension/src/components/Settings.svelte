@@ -5,11 +5,30 @@
     getNoExpiryInterval, setNoExpiryInterval, type NoExpiryInterval,
   } from '../lib/settings';
   import { SELECTABLE, currentSelection, setLocale, t, type LocaleSel } from '../lib/i18n.svelte';
+  import { checkUpdate } from '../lib/update';
 
   let lead = $state<ExpiryLead>('14');
   let interval = $state<NoExpiryInterval>('30');
   let langSel = $state<LocaleSel>('system');
   let saved = $state(false);
+  let updateMsg = $state('');
+
+  async function doCheckUpdate() {
+    updateMsg = t('updateChecking');
+    try {
+      const info = await checkUpdate();
+      if (info.hasUpdate) {
+        if (confirm(t('updateAvailable', { latest: info.latest })) && info.url) {
+          window.open(info.url, '_blank');
+        }
+        updateMsg = '';
+      } else {
+        updateMsg = t('updateUpToDate', { version: info.current });
+      }
+    } catch {
+      updateMsg = t('updateFailed');
+    }
+  }
 
   onMount(async () => {
     lead = await getExpiryLead();
@@ -83,5 +102,9 @@
 {/each}
 
 {#if saved}<div class="ok">{t('saved')}</div>{/if}
+
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0" />
+<button class="ghost" style="width:100%" onclick={doCheckUpdate}>{t('updateCheck')}</button>
+{#if updateMsg}<div class="ok" style="margin-top:6px">{updateMsg}</div>{/if}
 
 <div class="banner" style="margin-top:16px">{t('settingsNote')}</div>

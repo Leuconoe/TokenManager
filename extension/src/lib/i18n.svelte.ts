@@ -51,6 +51,9 @@ const M: Record<Locale, Dict> = {
     language: '언어', languageSystem: '시스템 기본',
     expiryTitle: '만료 경고 시점', expirySub: '만료일이 있는 토큰을 만료 며칠 전부터 경고할지',
     lead7: '만료 7일 전', lead14: '만료 14일 전', lead30: '만료 30일 전',
+    updateCheck: '업데이트 확인', updateChecking: '확인 중…', updateUpToDate: '최신 버전입니다 ({version})',
+    updateAvailable: '새 버전 {latest} — 릴리즈를 열까요?', updateOpen: '열기', updateFailed: '업데이트 확인 실패',
+    mergeConflict: "'{name}' 항목이 로컬과 다릅니다.\n확인=가져온 값으로 덮어쓰기, 취소=로컬 유지",
   },
   en: {
     titleList: 'Token Vault', titleAdd: 'Add token', titleEdit: 'Edit token',
@@ -81,6 +84,9 @@ const M: Record<Locale, Dict> = {
     language: 'Language', languageSystem: 'System default',
     expiryTitle: 'Expiry warning lead time', expirySub: 'How many days before expiry to warn (for tokens that have one)',
     lead7: '7 days before', lead14: '14 days before', lead30: '30 days before',
+    updateCheck: 'Check for updates', updateChecking: 'Checking…', updateUpToDate: "Latest version ({version})",
+    updateAvailable: 'Version {latest} available — open the release?', updateOpen: 'Open', updateFailed: 'Update check failed',
+    mergeConflict: "'{name}' differs from the local entry.\nOK = overwrite with imported, Cancel = keep local",
   },
   ja: {
     titleList: 'トークン保管庫', titleAdd: 'トークンを追加', titleEdit: 'トークンを編集',
@@ -111,6 +117,9 @@ const M: Record<Locale, Dict> = {
     language: '言語', languageSystem: 'システムの既定',
     expiryTitle: '有効期限の警告時期', expirySub: '有効期限のあるトークンを期限の何日前から警告するか',
     lead7: '期限7日前', lead14: '期限14日前', lead30: '期限30日前',
+    updateCheck: 'アップデートを確認', updateChecking: '確認中…', updateUpToDate: '最新バージョンです ({version})',
+    updateAvailable: '新バージョン {latest} — リリースを開きますか？', updateOpen: '開く', updateFailed: 'アップデート確認に失敗',
+    mergeConflict: "'{name}' がローカルと異なります。\nOK=取り込んだ値で上書き、キャンセル=ローカル維持",
   },
   zh: {
     titleList: '令牌保管库', titleAdd: '添加令牌', titleEdit: '编辑令牌',
@@ -140,6 +149,9 @@ const M: Record<Locale, Dict> = {
     language: '语言', languageSystem: '系统默认',
     expiryTitle: '过期警告提前量', expirySub: '对有过期日期的令牌，提前几天开始警告',
     lead7: '过期前 7 天', lead14: '过期前 14 天', lead30: '过期前 30 天',
+    updateCheck: '检查更新', updateChecking: '检查中…', updateUpToDate: '已是最新版本（{version}）',
+    updateAvailable: '有新版本 {latest} — 打开发布页？', updateOpen: '打开', updateFailed: '检查更新失败',
+    mergeConflict: "'{name}' 与本地不同。\n确定=用导入值覆盖，取消=保留本地",
   },
   zh_Hant: {
     titleList: '權杖保管庫', titleAdd: '新增權杖', titleEdit: '編輯權杖',
@@ -169,6 +181,9 @@ const M: Record<Locale, Dict> = {
     language: '語言', languageSystem: '系統預設',
     expiryTitle: '到期警告提前量', expirySub: '對有到期日的權杖，提前幾天開始警告',
     lead7: '到期前 7 天', lead14: '到期前 14 天', lead30: '到期前 30 天',
+    updateCheck: '檢查更新', updateChecking: '檢查中…', updateUpToDate: '已是最新版本（{version}）',
+    updateAvailable: '有新版本 {latest} — 開啟發行頁？', updateOpen: '開啟', updateFailed: '檢查更新失敗',
+    mergeConflict: "'{name}' 與本機不同。\n確定=以匯入值覆寫，取消=保留本機",
   },
   es: {
     titleList: 'Bóveda de tokens', titleAdd: 'Añadir token', titleEdit: 'Editar token',
@@ -199,6 +214,9 @@ const M: Record<Locale, Dict> = {
     language: 'Idioma', languageSystem: 'Predeterminado del sistema',
     expiryTitle: 'Antelación de aviso de caducidad', expirySub: 'Cuántos días antes de caducar avisar (para tokens con caducidad)',
     lead7: '7 días antes', lead14: '14 días antes', lead30: '30 días antes',
+    updateCheck: 'Buscar actualizaciones', updateChecking: 'Buscando…', updateUpToDate: 'Última versión ({version})',
+    updateAvailable: 'Versión {latest} disponible — ¿abrir la versión?', updateOpen: 'Abrir', updateFailed: 'Error al buscar actualizaciones',
+    mergeConflict: "'{name}' difiere de la entrada local.\nAceptar = sobrescribir con la importada, Cancelar = conservar local",
   },
   fr: {
     titleList: 'Coffre de jetons', titleAdd: 'Ajouter un jeton', titleEdit: 'Modifier le jeton',
@@ -229,6 +247,9 @@ const M: Record<Locale, Dict> = {
     language: 'Langue', languageSystem: 'Par défaut du système',
     expiryTitle: "Délai d'alerte d'expiration", expirySub: "Combien de jours avant l'expiration alerter (jetons avec date)",
     lead7: '7 jours avant', lead14: '14 jours avant', lead30: '30 jours avant',
+    updateCheck: 'Rechercher des mises à jour', updateChecking: 'Recherche…', updateUpToDate: 'Dernière version ({version})',
+    updateAvailable: 'Version {latest} disponible — ouvrir la version ?', updateOpen: 'Ouvrir', updateFailed: 'Échec de la recherche',
+    mergeConflict: "'{name}' diffère de l'entrée locale.\nOK = écraser avec l'importée, Annuler = garder la locale",
   },
 };
 

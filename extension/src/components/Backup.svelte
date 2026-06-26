@@ -15,6 +15,14 @@
   let err = $state('');
   let fileInput: HTMLInputElement;
 
+  // Compares the meaningful fields (ignores id/timestamps).
+  function sameData(a: TokenEntry, b: TokenEntry): boolean {
+    return a.url === b.url &&
+      a.issuedAt === b.issuedAt &&
+      a.expiresAt === b.expiresAt &&
+      a.note === b.note;
+  }
+
   function fileName(): string {
     const d = new Date();
     const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
@@ -46,9 +54,20 @@
       if (mode === 'overwrite') {
         next = incoming;
       } else {
-        const map = new Map(entries.map((e) => [e.id, e]));
-        for (const e of incoming) map.set(e.id, e);
-        next = [...map.values()];
+        // Merge keyed by serviceName (title). On a real difference, let the
+        // user choose local vs imported (e.g. local has expiry, imported none).
+        const byTitle = new Map(entries.map((e) => [e.serviceName, e]));
+        for (const inc of incoming) {
+          const local = byTitle.get(inc.serviceName);
+          if (!local) {
+            byTitle.set(inc.serviceName, inc);
+          } else if (!sameData(local, inc)) {
+            const useImported = confirm(t('mergeConflict', { name: inc.serviceName }));
+            // keep title unique: overwrite the local row in place when imported wins
+            byTitle.set(inc.serviceName, useImported ? { ...inc, id: local.id } : local);
+          }
+        }
+        next = [...byTitle.values()];
       }
       await onImported(next);
       msg = t('restored', { count: incoming.length });
