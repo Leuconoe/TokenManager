@@ -235,6 +235,31 @@ class AppLocalizationsJa extends AppLocalizations {
       'データは端末の Keystore 鍵で暗号化されます。コードに鍵がないため、逆コンパイルや他端末へのコピーでは復元できません。root 化端末では警告のみ表示し、ブロックはしません。';
 
   @override
+  String get settingsCheckUpdate => 'アップデートを確認';
+
+  @override
+  String get updateChecking => 'アップデートを確認中…';
+
+  @override
+  String updateUpToDate(String version) {
+    return '最新バージョンです ($version)';
+  }
+
+  @override
+  String get updateAvailableTitle => 'アップデートあり';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return '新しいバージョン $latest があります（現在 $current）。リリースページを開きますか？';
+  }
+
+  @override
+  String get updateOpen => '開く';
+
+  @override
+  String get updateFailed => 'アップデートの確認に失敗しました';
+
+  @override
   String notifExpiredTitle(int count) {
     return '期限切れトークン $count 件';
   }

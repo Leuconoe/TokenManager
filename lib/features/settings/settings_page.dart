@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -103,6 +104,13 @@ class SettingsPage extends ConsumerWidget {
             ),
             const Divider(),
             ListTile(
+              leading: const Icon(Icons.system_update_outlined),
+              title: Text(l.settingsCheckUpdate),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _checkUpdate(context, ref, l),
+            ),
+            const Divider(),
+            ListTile(
               leading: const Icon(Icons.shield_outlined),
               title: Text(l.securitySectionTitle),
               subtitle: Text(l.securityInfo),
@@ -125,6 +133,45 @@ class SettingsPage extends ConsumerWidget {
         ExpiryLeadInterval.days14 => l.lead14Days,
         ExpiryLeadInterval.days30 => l.lead30Days,
       };
+
+  Future<void> _checkUpdate(
+      BuildContext context, WidgetRef ref, AppLocalizations l) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(SnackBar(content: Text(l.updateChecking)));
+    try {
+      final info = await ref.read(updateServiceProvider).check();
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      if (!info.hasUpdate) {
+        messenger.showSnackBar(
+            SnackBar(content: Text(l.updateUpToDate(info.current))));
+        return;
+      }
+      final open = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.updateAvailableTitle),
+          content: Text(l.updateAvailableBody(info.latest, info.current)),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l.actionCancel)),
+            FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(l.updateOpen)),
+          ],
+        ),
+      );
+      if (open == true && info.url.isNotEmpty) {
+        await launchUrl(Uri.parse(info.url),
+            mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(content: Text(l.updateFailed)));
+    }
+  }
 
   String _localeLabel(AppLocalizations l, Locale? current) {
     if (current == null) return l.languageSystemDefault;

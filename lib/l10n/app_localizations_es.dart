@@ -242,6 +242,31 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los datos se cifran con una clave del Keystore del dispositivo. No hay clave en el código, por lo que no se puede recuperar descompilando ni copiando a otro dispositivo. En dispositivos con root solo se muestra un aviso, sin bloquear el acceso.';
 
   @override
+  String get settingsCheckUpdate => 'Buscar actualizaciones';
+
+  @override
+  String get updateChecking => 'Buscando actualizaciones…';
+
+  @override
+  String updateUpToDate(String version) {
+    return 'Tienes la última versión ($version)';
+  }
+
+  @override
+  String get updateAvailableTitle => 'Actualización disponible';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return 'La versión $latest está disponible (actual $current). ¿Abrir la página de la versión?';
+  }
+
+  @override
+  String get updateOpen => 'Abrir';
+
+  @override
+  String get updateFailed => 'Error al buscar actualizaciones';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count token(s) caducado(s)';
   }

@@ -13,6 +13,7 @@ import 'scan/autostart_service.dart';
 import 'scan/desktop_scheduler.dart';
 import 'scan/scan_scheduler.dart';
 import 'scan/scan_service.dart';
+import 'update/update_service.dart';
 import '../features/backup/data/backup_repository.dart';
 import '../features/lock/biometric_service.dart';
 import '../features/settings/settings_repository.dart';
@@ -77,6 +78,8 @@ final scanSchedulerProvider = Provider<ScanScheduler>((ref) {
     ref.watch(autoStartServiceProvider),
   );
 });
+
+final updateServiceProvider = Provider<UpdateService>((ref) => UpdateService());
 
 /// Whether the vault is currently unlocked (gated by biometric auth).
 final appUnlockedProvider = StateProvider<bool>((ref) => false);

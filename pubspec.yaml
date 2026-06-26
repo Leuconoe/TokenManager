@@ -47,6 +47,9 @@ dependencies:
   file_picker: ^11.0.0
   share_plus: ^10.0.2
 
+  # Open the GitHub release page on update-available.
+  url_launcher: ^6.3.0
+
   # Desktop (Windows) runtime: tray-resident + launch at login.
   # No Android impl — unused there, guarded by Platform checks.
   window_manager: ^0.4.3

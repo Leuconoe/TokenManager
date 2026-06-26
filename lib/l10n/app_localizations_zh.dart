@@ -233,6 +233,31 @@ class AppLocalizationsZh extends AppLocalizations {
       '数据使用设备 Keystore 密钥加密。代码中不含密钥，因此无法通过反编译或复制到其他设备来恢复。在已 root 的设备上仅显示警告，不会阻止访问。';
 
   @override
+  String get settingsCheckUpdate => '检查更新';
+
+  @override
+  String get updateChecking => '正在检查更新…';
+
+  @override
+  String updateUpToDate(String version) {
+    return '已是最新版本（$version）';
+  }
+
+  @override
+  String get updateAvailableTitle => '有可用更新';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return '有新版本 $latest（当前 $current）。要打开发布页面吗？';
+  }
+
+  @override
+  String get updateOpen => '打开';
+
+  @override
+  String get updateFailed => '检查更新失败';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count 个已过期令牌';
   }
@@ -513,6 +538,31 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get securityInfo =>
       '資料使用裝置 Keystore 金鑰加密。程式碼中不含金鑰，因此無法透過反編譯或複製到其他裝置還原。在已 root 的裝置上僅顯示警告，不會封鎖存取。';
+
+  @override
+  String get settingsCheckUpdate => '檢查更新';
+
+  @override
+  String get updateChecking => '正在檢查更新…';
+
+  @override
+  String updateUpToDate(String version) {
+    return '已是最新版本（$version）';
+  }
+
+  @override
+  String get updateAvailableTitle => '有可用更新';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return '有新版本 $latest（目前 $current）。要開啟發行頁面嗎？';
+  }
+
+  @override
+  String get updateOpen => '開啟';
+
+  @override
+  String get updateFailed => '檢查更新失敗';
 
   @override
   String notifExpiredTitle(int count) {

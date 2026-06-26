@@ -235,6 +235,31 @@ class AppLocalizationsKo extends AppLocalizations {
       '데이터는 기기 Keystore 키로 암호화됩니다. 코드에 키가 없어 디컴파일·타기기 복사로 복원할 수 없습니다. 루팅 기기에서는 경고만 표시되며 차단하지 않습니다.';
 
   @override
+  String get settingsCheckUpdate => '업데이트 확인';
+
+  @override
+  String get updateChecking => '업데이트 확인 중…';
+
+  @override
+  String updateUpToDate(String version) {
+    return '최신 버전입니다 ($version)';
+  }
+
+  @override
+  String get updateAvailableTitle => '업데이트 가능';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return '새 버전 $latest 이(가) 있습니다 (현재 $current). 릴리즈 페이지를 열까요?';
+  }
+
+  @override
+  String get updateOpen => '열기';
+
+  @override
+  String get updateFailed => '업데이트 확인에 실패했습니다';
+
+  @override
   String notifExpiredTitle(int count) {
     return '만료된 토큰 $count건';
   }

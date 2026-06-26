@@ -244,6 +244,31 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les données sont chiffrées avec une clé Keystore de l\'appareil. Aucune clé n\'est dans le code : impossible de récupérer par décompilation ou copie vers un autre appareil. Sur les appareils rootés, seul un avertissement s\'affiche, sans blocage.';
 
   @override
+  String get settingsCheckUpdate => 'Rechercher des mises à jour';
+
+  @override
+  String get updateChecking => 'Recherche de mises à jour…';
+
+  @override
+  String updateUpToDate(String version) {
+    return 'Vous avez la dernière version ($version)';
+  }
+
+  @override
+  String get updateAvailableTitle => 'Mise à jour disponible';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return 'La version $latest est disponible (actuelle $current). Ouvrir la page de version ?';
+  }
+
+  @override
+  String get updateOpen => 'Ouvrir';
+
+  @override
+  String get updateFailed => 'Échec de la recherche de mises à jour';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count jeton(s) expiré(s)';
   }

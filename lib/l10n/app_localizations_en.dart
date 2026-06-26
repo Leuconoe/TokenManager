@@ -241,6 +241,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'Data is encrypted with a device Keystore key. No key exists in the code, so it cannot be recovered by decompiling or copying to another device. On rooted devices a warning is shown but access is not blocked.';
 
   @override
+  String get settingsCheckUpdate => 'Check for updates';
+
+  @override
+  String get updateChecking => 'Checking for updates…';
+
+  @override
+  String updateUpToDate(String version) {
+    return 'You\'re on the latest version ($version)';
+  }
+
+  @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String updateAvailableBody(String latest, String current) {
+    return 'Version $latest is available (current $current). Open the release page?';
+  }
+
+  @override
+  String get updateOpen => 'Open';
+
+  @override
+  String get updateFailed => 'Update check failed';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count expired token(s)';
   }

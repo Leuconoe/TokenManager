@@ -533,6 +533,48 @@ abstract class AppLocalizations {
   /// **'데이터는 기기 Keystore 키로 암호화됩니다. 코드에 키가 없어 디컴파일·타기기 복사로 복원할 수 없습니다. 루팅 기기에서는 경고만 표시되며 차단하지 않습니다.'**
   String get securityInfo;
 
+  /// No description provided for @settingsCheckUpdate.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트 확인'**
+  String get settingsCheckUpdate;
+
+  /// No description provided for @updateChecking.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트 확인 중…'**
+  String get updateChecking;
+
+  /// No description provided for @updateUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'최신 버전입니다 ({version})'**
+  String updateUpToDate(String version);
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트 가능'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 버전 {latest} 이(가) 있습니다 (현재 {current}). 릴리즈 페이지를 열까요?'**
+  String updateAvailableBody(String latest, String current);
+
+  /// No description provided for @updateOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'열기'**
+  String get updateOpen;
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트 확인에 실패했습니다'**
+  String get updateFailed;
+
   /// No description provided for @notifExpiredTitle.
   ///
   /// In ko, this message translates to:
