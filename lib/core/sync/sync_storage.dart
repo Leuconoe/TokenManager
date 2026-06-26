@@ -7,7 +7,8 @@ abstract interface class SyncStorage {
   /// Returns the remote blob, or null if it doesn't exist yet.
   Future<Uint8List?> read();
 
-  /// Overwrites the remote blob.
+  /// Overwrites the remote blob. Implementations SHOULD write atomically
+  /// (temp file + rename) so a cloud client never picks up a half-written file.
   Future<void> write(Uint8List bytes);
 
   /// Whether a sync target is configured (folder/file chosen).
