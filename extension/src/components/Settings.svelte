@@ -1,40 +1,60 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getNoExpiryInterval, setNoExpiryInterval, type NoExpiryInterval } from '../lib/settings';
+  import { SELECTABLE, currentSelection, setLocale, t, type LocaleSel } from '../lib/i18n.svelte';
 
-  let current = $state<NoExpiryInterval>('30');
+  let interval = $state<NoExpiryInterval>('30');
+  let langSel = $state<LocaleSel>('system');
   let saved = $state(false);
 
   onMount(async () => {
-    current = await getNoExpiryInterval();
+    interval = await getNoExpiryInterval();
+    langSel = await currentSelection();
   });
 
-  async function choose(v: NoExpiryInterval) {
-    current = v;
+  async function chooseInterval(v: NoExpiryInterval) {
+    interval = v;
     await setNoExpiryInterval(v);
+    flash();
+  }
+
+  async function chooseLang(code: LocaleSel) {
+    langSel = code;
+    await setLocale(code); // updates t() reactively across the UI
+    flash();
+  }
+
+  function flash() {
     saved = true;
     setTimeout(() => (saved = false), 1500);
   }
 
-  const opts: { v: NoExpiryInterval; label: string }[] = [
-    { v: 'off', label: '끄기' },
-    { v: '15', label: '15일마다' },
-    { v: '30', label: '30일마다' },
+  const ivOpts: { v: NoExpiryInterval; key: string }[] = [
+    { v: 'off', key: 'intervalOff' },
+    { v: '15', key: 'interval15' },
+    { v: '30', key: 'interval30' },
   ];
 </script>
 
-<div><b style="font-size:13px">무기한 토큰 경고</b></div>
-<p class="sub">만료일이 없는 토큰에 대한 주기적 보안 경고 알림 주기</p>
-
-{#each opts as o (o.v)}
+<div><b style="font-size:13px">{t('language')}</b></div>
+{#each SELECTABLE as o (o.code)}
   <label class="row" style="margin:6px 0;cursor:pointer">
-    <input type="radio" name="noexpiry" style="width:auto" checked={current === o.v} onclick={() => choose(o.v)} />
-    <span>{o.label}</span>
+    <input type="radio" name="lang" style="width:auto" checked={langSel === o.code} onclick={() => chooseLang(o.code)} />
+    <span>{o.code === 'system' ? t('languageSystem') : o.label}</span>
   </label>
 {/each}
 
-{#if saved}<div class="ok">저장됨</div>{/if}
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0" />
 
-<div class="banner" style="margin-top:16px">
-  알림은 백그라운드에서 동작하며, 개수만 표시합니다(어떤 서비스인지는 노출하지 않음). 상세는 잠금 해제 후 확인하세요.
-</div>
+<div><b style="font-size:13px">{t('noExpiryTitle')}</b></div>
+<p class="sub">{t('noExpirySub')}</p>
+{#each ivOpts as o (o.v)}
+  <label class="row" style="margin:6px 0;cursor:pointer">
+    <input type="radio" name="noexpiry" style="width:auto" checked={interval === o.v} onclick={() => chooseInterval(o.v)} />
+    <span>{t(o.key)}</span>
+  </label>
+{/each}
+
+{#if saved}<div class="ok">{t('saved')}</div>{/if}
+
+<div class="banner" style="margin-top:16px">{t('settingsNote')}</div>

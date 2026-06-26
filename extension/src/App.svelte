@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { save, unlock, vaultExists } from './lib/vault';
   import type { TokenEntry } from './lib/domain';
+  import { t } from './lib/i18n.svelte';
   import TokenList from './components/TokenList.svelte';
   import TokenEdit from './components/TokenEdit.svelte';
   import Backup from './components/Backup.svelte';
@@ -24,7 +25,7 @@
   async function doUnlock() {
     err = '';
     if (pwInput.length < 8) {
-      err = '패스프레이즈는 8자 이상이어야 합니다';
+      err = t('pwTooShort');
       return;
     }
     busy = true;
@@ -33,9 +34,9 @@
       pass = pwInput;
       pwInput = '';
       locked = false;
-      if (!hasVault) await save(pass, entries); // seal the vault on first set
+      if (!hasVault) await save(pass, entries);
     } catch {
-      err = '패스프레이즈가 올바르지 않습니다';
+      err = t('pwWrong');
     } finally {
       busy = false;
     }
@@ -63,6 +64,13 @@
     entries = [];
     view = 'list';
   }
+
+  let title = $derived(
+    view === 'edit' ? (editing ? t('titleEdit') : t('titleAdd'))
+    : view === 'backup' ? t('titleBackup')
+    : view === 'settings' ? t('titleSettings')
+    : t('titleList'),
+  );
 </script>
 
 {#if locked}
@@ -71,16 +79,16 @@
       <div style="font-size:40px">🛡️</div>
       <h1 style="margin:0">TokenManager</h1>
       <p style="color:var(--muted);font-size:13px;margin:0">
-        {hasVault ? '패스프레이즈를 입력해 잠금을 해제하세요' : '새 패스프레이즈를 설정하세요 (8자 이상)'}
+        {hasVault ? t('lockUnlockPrompt') : t('lockSetPrompt')}
       </p>
       <input
         type="password"
-        placeholder="패스프레이즈"
+        placeholder={t('passphrase')}
         bind:value={pwInput}
         onkeydown={(e) => e.key === 'Enter' && doUnlock()}
       />
       <button onclick={doUnlock} disabled={busy} style="width:100%">
-        {hasVault ? '잠금 해제' : '시작하기'}
+        {hasVault ? t('unlock') : t('start')}
       </button>
       {#if err}<div class="err">{err}</div>{/if}
     </div>
@@ -91,11 +99,11 @@
       {#if view !== 'list'}
         <button class="icon ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick={() => (view = 'list')}>←</button>
       {/if}
-      <h1>{view === 'edit' ? (editing ? '토큰 수정' : '토큰 추가') : view === 'backup' ? '백업 / 복원' : view === 'settings' ? '설정' : '토큰 보관함'}</h1>
+      <h1>{title}</h1>
       {#if view === 'list'}
-        <button class="icon" title="설정" onclick={() => (view = 'settings')}>⚙</button>
-        <button class="icon" title="백업/복원" onclick={() => (view = 'backup')}>⛁</button>
-        <button class="icon" title="잠금" onclick={lock}>🔒</button>
+        <button class="icon" title={t('titleSettings')} onclick={() => (view = 'settings')}>⚙</button>
+        <button class="icon" title={t('titleBackup')} onclick={() => (view = 'backup')}>⛁</button>
+        <button class="icon" title={t('unlock')} onclick={lock}>🔒</button>
       {/if}
     </header>
     <main>
