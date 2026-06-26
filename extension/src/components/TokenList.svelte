@@ -2,8 +2,9 @@
   import { statusOf, type TokenEntry, type TokenStatus } from '../lib/domain';
   import { t } from '../lib/i18n.svelte';
 
-  let { entries, onAdd, onEdit }: {
+  let { entries, leadDays = 14, onAdd, onEdit }: {
     entries: TokenEntry[];
+    leadDays?: number;
     onAdd: () => void;
     onEdit: (e: TokenEntry) => void;
   } = $props();
@@ -41,7 +42,7 @@
         {#if e.url}<div class="url">{e.url}</div>{/if}
         <div class="sub">{subtitle(e)}</div>
       </div>
-      <span class="badge {statusOf(e, now)}">{t(STATUS_KEY[statusOf(e, now)])}</span>
+      <span class="badge {statusOf(e, now, leadDays)}">{t(STATUS_KEY[statusOf(e, now, leadDays)])}</span>
     </div>
   {/each}
 {/if}

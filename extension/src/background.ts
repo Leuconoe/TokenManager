@@ -4,7 +4,7 @@
 // require unlocking the popup.
 
 import type { Schedule } from './lib/vault';
-import { NOEXPIRY_INTERVAL_KEY, NOEXPIRY_LAST_KEY } from './lib/settings';
+import { EXPIRY_LEAD_KEY, NOEXPIRY_INTERVAL_KEY, NOEXPIRY_LAST_KEY } from './lib/settings';
 
 const ALARM = 'tm-expiry-scan';
 const SCHEDULE_KEY = 'tm_schedule_v1';
@@ -24,6 +24,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 async function scan(): Promise<void> {
   const r = await chrome.storage.local.get([
     SCHEDULE_KEY,
+    EXPIRY_LEAD_KEY,
     NOEXPIRY_INTERVAL_KEY,
     NOEXPIRY_LAST_KEY,
   ]);
@@ -32,8 +33,9 @@ async function scan(): Promise<void> {
 
   const now = Date.now();
 
-  // --- Expiry / expiring-soon ---
-  const soonMs = (s.soonDays ?? 14) * DAY_MS;
+  // --- Expiry / expiring-soon (lead time = user setting, default 14d) ---
+  const leadDays = parseInt((r[EXPIRY_LEAD_KEY] as string) || '14', 10);
+  const soonMs = leadDays * DAY_MS;
   let expired = 0;
   let soon = 0;
   for (const t of s.expiries ?? []) {

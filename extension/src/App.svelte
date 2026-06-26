@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { save, unlock, vaultExists } from './lib/vault';
+  import { getExpiryLead } from './lib/settings';
   import type { TokenEntry } from './lib/domain';
   import { t } from './lib/i18n.svelte';
   import TokenList from './components/TokenList.svelte';
@@ -17,10 +18,16 @@
   let pwInput = $state('');
   let err = $state('');
   let busy = $state(false);
+  let leadDays = $state(14);
 
   onMount(async () => {
     hasVault = await vaultExists();
+    leadDays = parseInt(await getExpiryLead(), 10);
   });
+
+  async function refreshLead() {
+    leadDays = parseInt(await getExpiryLead(), 10);
+  }
 
   async function doUnlock() {
     err = '';
@@ -97,7 +104,7 @@
   <div class="app">
     <header>
       {#if view !== 'list'}
-        <button class="icon ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick={() => (view = 'list')}>←</button>
+        <button class="icon ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick={() => { view = 'list'; refreshLead(); }}>←</button>
       {/if}
       <h1>{title}</h1>
       {#if view === 'list'}
@@ -108,7 +115,7 @@
     </header>
     <main>
       {#if view === 'list'}
-        <TokenList {entries} onAdd={() => { editing = null; view = 'edit'; }} onEdit={(e) => { editing = e; view = 'edit'; }} />
+        <TokenList {entries} {leadDays} onAdd={() => { editing = null; view = 'edit'; }} onEdit={(e) => { editing = e; view = 'edit'; }} />
       {:else if view === 'edit'}
         <TokenEdit existing={editing} {onSave} {onDelete} onCancel={() => (view = 'list')} />
       {:else if view === 'backup'}

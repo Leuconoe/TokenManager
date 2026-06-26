@@ -49,6 +49,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: '끄기', interval15: '15일마다', interval30: '30일마다',
     saved: '저장됨', settingsNote: '알림은 백그라운드에서 동작하며 개수만 표시합니다(어떤 서비스인지 비노출). 상세는 잠금 해제 후 확인하세요.',
     language: '언어', languageSystem: '시스템 기본',
+    expiryTitle: '만료 경고 시점', expirySub: '만료일이 있는 토큰을 만료 며칠 전부터 경고할지',
+    lead7: '만료 7일 전', lead14: '만료 14일 전', lead30: '만료 30일 전',
   },
   en: {
     titleList: 'Token Vault', titleAdd: 'Add token', titleEdit: 'Edit token',
@@ -77,6 +79,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: 'Off', interval15: 'Every 15 days', interval30: 'Every 30 days',
     saved: 'Saved', settingsNote: 'Alerts run in the background and show counts only (not which service). Unlock to see details.',
     language: 'Language', languageSystem: 'System default',
+    expiryTitle: 'Expiry warning lead time', expirySub: 'How many days before expiry to warn (for tokens that have one)',
+    lead7: '7 days before', lead14: '14 days before', lead30: '30 days before',
   },
   ja: {
     titleList: 'トークン保管庫', titleAdd: 'トークンを追加', titleEdit: 'トークンを編集',
@@ -105,6 +109,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: 'オフ', interval15: '15日ごと', interval30: '30日ごと',
     saved: '保存しました', settingsNote: '通知はバックグラウンドで動作し、件数のみ表示します（サービスは非表示）。詳細はロック解除後に確認。',
     language: '言語', languageSystem: 'システムの既定',
+    expiryTitle: '有効期限の警告時期', expirySub: '有効期限のあるトークンを期限の何日前から警告するか',
+    lead7: '期限7日前', lead14: '期限14日前', lead30: '期限30日前',
   },
   zh: {
     titleList: '令牌保管库', titleAdd: '添加令牌', titleEdit: '编辑令牌',
@@ -132,6 +138,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: '关闭', interval15: '每 15 天', interval30: '每 30 天',
     saved: '已保存', settingsNote: '提醒在后台运行，仅显示数量（不显示具体服务）。详情请解锁查看。',
     language: '语言', languageSystem: '系统默认',
+    expiryTitle: '过期警告提前量', expirySub: '对有过期日期的令牌，提前几天开始警告',
+    lead7: '过期前 7 天', lead14: '过期前 14 天', lead30: '过期前 30 天',
   },
   zh_Hant: {
     titleList: '權杖保管庫', titleAdd: '新增權杖', titleEdit: '編輯權杖',
@@ -159,6 +167,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: '關閉', interval15: '每 15 天', interval30: '每 30 天',
     saved: '已儲存', settingsNote: '提醒於背景執行，僅顯示數量（不顯示服務）。詳情請解鎖查看。',
     language: '語言', languageSystem: '系統預設',
+    expiryTitle: '到期警告提前量', expirySub: '對有到期日的權杖，提前幾天開始警告',
+    lead7: '到期前 7 天', lead14: '到期前 14 天', lead30: '到期前 30 天',
   },
   es: {
     titleList: 'Bóveda de tokens', titleAdd: 'Añadir token', titleEdit: 'Editar token',
@@ -187,6 +197,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: 'Desactivado', interval15: 'Cada 15 días', interval30: 'Cada 30 días',
     saved: 'Guardado', settingsNote: 'Los avisos se ejecutan en segundo plano y muestran solo recuentos. Desbloquea para ver detalles.',
     language: 'Idioma', languageSystem: 'Predeterminado del sistema',
+    expiryTitle: 'Antelación de aviso de caducidad', expirySub: 'Cuántos días antes de caducar avisar (para tokens con caducidad)',
+    lead7: '7 días antes', lead14: '14 días antes', lead30: '30 días antes',
   },
   fr: {
     titleList: 'Coffre de jetons', titleAdd: 'Ajouter un jeton', titleEdit: 'Modifier le jeton',
@@ -215,6 +227,8 @@ const M: Record<Locale, Dict> = {
     intervalOff: 'Désactivé', interval15: 'Tous les 15 jours', interval30: 'Tous les 30 jours',
     saved: 'Enregistré', settingsNote: 'Les alertes s’exécutent en arrière-plan et n’affichent que des nombres. Déverrouillez pour les détails.',
     language: 'Langue', languageSystem: 'Par défaut du système',
+    expiryTitle: "Délai d'alerte d'expiration", expirySub: "Combien de jours avant l'expiration alerter (jetons avec date)",
+    lead7: '7 jours avant', lead14: '14 jours avant', lead30: '30 jours avant',
   },
 };
 
