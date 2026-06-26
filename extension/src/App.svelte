@@ -5,12 +5,13 @@
   import TokenList from './components/TokenList.svelte';
   import TokenEdit from './components/TokenEdit.svelte';
   import Backup from './components/Backup.svelte';
+  import Settings from './components/Settings.svelte';
 
   let locked = $state(true);
   let hasVault = $state(false);
   let pass = $state(''); // session passphrase — memory only, never persisted
   let entries = $state<TokenEntry[]>([]);
-  let view = $state<'list' | 'edit' | 'backup'>('list');
+  let view = $state<'list' | 'edit' | 'backup' | 'settings'>('list');
   let editing = $state<TokenEntry | null>(null);
   let pwInput = $state('');
   let err = $state('');
@@ -90,8 +91,9 @@
       {#if view !== 'list'}
         <button class="icon ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick={() => (view = 'list')}>←</button>
       {/if}
-      <h1>{view === 'edit' ? (editing ? '토큰 수정' : '토큰 추가') : view === 'backup' ? '백업 / 복원' : '토큰 보관함'}</h1>
+      <h1>{view === 'edit' ? (editing ? '토큰 수정' : '토큰 추가') : view === 'backup' ? '백업 / 복원' : view === 'settings' ? '설정' : '토큰 보관함'}</h1>
       {#if view === 'list'}
+        <button class="icon" title="설정" onclick={() => (view = 'settings')}>⚙</button>
         <button class="icon" title="백업/복원" onclick={() => (view = 'backup')}>⛁</button>
         <button class="icon" title="잠금" onclick={lock}>🔒</button>
       {/if}
@@ -101,8 +103,10 @@
         <TokenList {entries} onAdd={() => { editing = null; view = 'edit'; }} onEdit={(e) => { editing = e; view = 'edit'; }} />
       {:else if view === 'edit'}
         <TokenEdit existing={editing} {onSave} {onDelete} onCancel={() => (view = 'list')} />
-      {:else}
+      {:else if view === 'backup'}
         <Backup {entries} {pass} onImported={persist} />
+      {:else}
+        <Settings />
       {/if}
     </main>
   </div>
