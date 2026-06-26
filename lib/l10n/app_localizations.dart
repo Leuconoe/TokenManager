@@ -491,6 +491,36 @@ abstract class AppLocalizations {
   /// **'30일마다 (기본)'**
   String get interval30Days;
 
+  /// No description provided for @expiryLeadTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료 경고 시점'**
+  String get expiryLeadTitle;
+
+  /// No description provided for @expiryLeadSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료일이 있는 토큰을 만료 며칠 전부터 경고할지'**
+  String get expiryLeadSubtitle;
+
+  /// No description provided for @lead7Days.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료 7일 전'**
+  String get lead7Days;
+
+  /// No description provided for @lead14Days.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료 14일 전 (기본)'**
+  String get lead14Days;
+
+  /// No description provided for @lead30Days.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료 30일 전'**
+  String get lead30Days;
+
   /// No description provided for @securitySectionTitle.
   ///
   /// In ko, this message translates to:

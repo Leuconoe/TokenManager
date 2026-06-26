@@ -66,7 +66,8 @@ class TokenListPage extends ConsumerWidget {
                   : ListView.separated(
                       itemCount: s.entries.length,
                       separatorBuilder: (_, __) => const Divider(height: 1),
-                      itemBuilder: (_, i) => _TokenTile(entry: s.entries[i]),
+                      itemBuilder: (_, i) =>
+                          _TokenTile(entry: s.entries[i], leadDays: s.leadDays),
                     ),
             ),
           ),
@@ -113,12 +114,13 @@ class _FilterChips extends StatelessWidget {
 
 class _TokenTile extends StatelessWidget {
   final TokenEntry entry;
-  const _TokenTile({required this.entry});
+  final int leadDays;
+  const _TokenTile({required this.entry, this.leadDays = 14});
 
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final status = entry.statusAt(now);
+    final status = entry.statusAt(now, soonDays: leadDays);
     return ListTile(
       title: Text(entry.serviceName,
           maxLines: 1, overflow: TextOverflow.ellipsis),

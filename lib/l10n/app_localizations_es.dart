@@ -219,6 +219,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get interval30Days => 'Cada 30 días (predet.)';
 
   @override
+  String get expiryLeadTitle => 'Antelación de aviso de caducidad';
+
+  @override
+  String get expiryLeadSubtitle =>
+      'Cuántos días antes de caducar avisar (tokens con caducidad)';
+
+  @override
+  String get lead7Days => '7 días antes';
+
+  @override
+  String get lead14Days => '14 días antes (predet.)';
+
+  @override
+  String get lead30Days => '30 días antes';
+
+  @override
   String get securitySectionTitle => 'Seguridad';
 
   @override

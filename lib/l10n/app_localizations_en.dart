@@ -218,6 +218,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get interval30Days => 'Every 30 days (default)';
 
   @override
+  String get expiryLeadTitle => 'Expiry warning lead time';
+
+  @override
+  String get expiryLeadSubtitle =>
+      'How many days before expiry to warn (for tokens with one)';
+
+  @override
+  String get lead7Days => '7 days before';
+
+  @override
+  String get lead14Days => '14 days before (default)';
+
+  @override
+  String get lead30Days => '30 days before';
+
+  @override
   String get securitySectionTitle => 'Security';
 
   @override

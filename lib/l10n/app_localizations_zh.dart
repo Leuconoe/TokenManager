@@ -211,6 +211,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get interval30Days => '每 30 天（默认）';
 
   @override
+  String get expiryLeadTitle => '过期警告提前量';
+
+  @override
+  String get expiryLeadSubtitle => '对有过期日期的令牌，提前几天开始警告';
+
+  @override
+  String get lead7Days => '过期前 7 天';
+
+  @override
+  String get lead14Days => '过期前 14 天（默认）';
+
+  @override
+  String get lead30Days => '过期前 30 天';
+
+  @override
   String get securitySectionTitle => '安全';
 
   @override
@@ -476,6 +491,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get interval30Days => '每 30 天（預設）';
+
+  @override
+  String get expiryLeadTitle => '到期警告提前量';
+
+  @override
+  String get expiryLeadSubtitle => '對有到期日的權杖，提前幾天開始警告';
+
+  @override
+  String get lead7Days => '到期前 7 天';
+
+  @override
+  String get lead14Days => '到期前 14 天（預設）';
+
+  @override
+  String get lead30Days => '到期前 30 天';
 
   @override
   String get securitySectionTitle => '安全';

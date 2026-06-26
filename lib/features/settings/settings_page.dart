@@ -7,11 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../tokens/token_providers.dart';
 import 'locale_controller.dart';
 import 'settings_repository.dart';
 
 final _intervalProvider = FutureProvider<NoExpiryWarnInterval>((ref) =>
     ref.watch(settingsRepositoryProvider).getNoExpiryInterval());
+
+final _expiryLeadProvider = FutureProvider<ExpiryLeadInterval>((ref) =>
+    ref.watch(settingsRepositoryProvider).getExpiryLead());
 
 final _autoStartProvider = FutureProvider<bool>(
     (ref) => ref.watch(settingsRepositoryProvider).getAutoStart());
@@ -55,6 +59,28 @@ class SettingsPage extends ConsumerWidget {
               ),
             const Divider(),
             ListTile(
+              title: Text(l.expiryLeadTitle),
+              subtitle: Text(l.expiryLeadSubtitle),
+            ),
+            RadioGroup<ExpiryLeadInterval>(
+              groupValue: ref.watch(_expiryLeadProvider).valueOrNull ??
+                  ExpiryLeadInterval.days14,
+              onChanged: (v) async {
+                await ref.read(settingsRepositoryProvider).setExpiryLead(v!);
+                ref.invalidate(_expiryLeadProvider);
+                ref.invalidate(tokenListProvider); // badges reflect new window
+              },
+              child: Column(
+                children: ExpiryLeadInterval.values
+                    .map((lead) => RadioListTile<ExpiryLeadInterval>(
+                          value: lead,
+                          title: Text(_leadLabel(l, lead)),
+                        ))
+                    .toList(),
+              ),
+            ),
+            const Divider(),
+            ListTile(
               title: Text(l.noExpiryWarnTitle),
               subtitle: Text(l.noExpiryWarnSubtitle),
             ),
@@ -92,6 +118,12 @@ class SettingsPage extends ConsumerWidget {
         NoExpiryWarnInterval.off => l.intervalOff,
         NoExpiryWarnInterval.days15 => l.interval15Days,
         NoExpiryWarnInterval.days30 => l.interval30Days,
+      };
+
+  String _leadLabel(AppLocalizations l, ExpiryLeadInterval lead) => switch (lead) {
+        ExpiryLeadInterval.days7 => l.lead7Days,
+        ExpiryLeadInterval.days14 => l.lead14Days,
+        ExpiryLeadInterval.days30 => l.lead30Days,
       };
 
   String _localeLabel(AppLocalizations l, Locale? current) {

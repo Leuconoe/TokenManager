@@ -213,6 +213,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get interval30Days => '30일마다 (기본)';
 
   @override
+  String get expiryLeadTitle => '만료 경고 시점';
+
+  @override
+  String get expiryLeadSubtitle => '만료일이 있는 토큰을 만료 며칠 전부터 경고할지';
+
+  @override
+  String get lead7Days => '만료 7일 전';
+
+  @override
+  String get lead14Days => '만료 14일 전 (기본)';
+
+  @override
+  String get lead30Days => '만료 30일 전';
+
+  @override
   String get securitySectionTitle => '보안';
 
   @override

@@ -221,6 +221,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get interval30Days => 'Tous les 30 jours (par défaut)';
 
   @override
+  String get expiryLeadTitle => 'Délai d\'alerte d\'expiration';
+
+  @override
+  String get expiryLeadSubtitle =>
+      'Combien de jours avant l\'expiration alerter (jetons avec date)';
+
+  @override
+  String get lead7Days => '7 jours avant';
+
+  @override
+  String get lead14Days => '14 jours avant (par défaut)';
+
+  @override
+  String get lead30Days => '30 jours avant';
+
+  @override
   String get securitySectionTitle => 'Sécurité';
 
   @override

@@ -213,6 +213,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get interval30Days => '30日ごと (既定)';
 
   @override
+  String get expiryLeadTitle => '有効期限の警告時期';
+
+  @override
+  String get expiryLeadSubtitle => '有効期限のあるトークンを期限の何日前から警告するか';
+
+  @override
+  String get lead7Days => '期限7日前';
+
+  @override
+  String get lead14Days => '期限14日前 (既定)';
+
+  @override
+  String get lead30Days => '期限30日前';
+
+  @override
   String get securitySectionTitle => 'セキュリティ';
 
   @override

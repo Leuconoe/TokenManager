@@ -2,6 +2,16 @@
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+/// How many days BEFORE expiry to start warning (tokens that HAVE an expiry).
+enum ExpiryLeadInterval {
+  days7(7),
+  days14(14),
+  days30(30);
+
+  final int days;
+  const ExpiryLeadInterval(this.days);
+}
+
 /// Cadence for the "no expiry" security-warning notification.
 enum NoExpiryWarnInterval {
   off(0),
@@ -14,6 +24,7 @@ enum NoExpiryWarnInterval {
 
 class SettingsRepository {
   static const _kInterval = 'tm_noexpiry_interval_v1';
+  static const _kExpiryLead = 'tm_expiry_lead_v1'; // days before expiry to warn
   static const _kLocale = 'tm_locale_tag_v1'; // BCP47 tag, or absent = system
   static const _kAutoStart = 'tm_autostart_v1'; // desktop launch-at-login
   final FlutterSecureStorage _storage;
@@ -34,6 +45,17 @@ class SettingsRepository {
 
   Future<void> setNoExpiryInterval(NoExpiryWarnInterval interval) =>
       _storage.write(key: _kInterval, value: interval.name);
+
+  Future<ExpiryLeadInterval> getExpiryLead() async {
+    final v = await _storage.read(key: _kExpiryLead);
+    return ExpiryLeadInterval.values.firstWhere(
+      (e) => e.name == v,
+      orElse: () => ExpiryLeadInterval.days14, // default
+    );
+  }
+
+  Future<void> setExpiryLead(ExpiryLeadInterval lead) =>
+      _storage.write(key: _kExpiryLead, value: lead.name);
 
   /// Returns the saved locale tag (e.g. "en", "zh_Hant"), or null for
   /// "follow system" (the default).

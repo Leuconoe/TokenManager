@@ -11,10 +11,12 @@ class TokenListState {
   final List<TokenEntry> entries;
   final TokenSort sort;
   final TokenStatus? filter; // null => all
+  final int leadDays; // expiry-soon window from Settings
   const TokenListState({
     required this.entries,
     this.sort = TokenSort.expirySoonest,
     this.filter,
+    this.leadDays = 14,
   });
 }
 
@@ -31,12 +33,14 @@ class TokenListNotifier extends AsyncNotifier<TokenListState> {
 
   Future<TokenListState> _load() async {
     final repo = ref.read(tokenRepositoryProvider);
+    final lead = (await ref.read(settingsRepositoryProvider).getExpiryLead()).days;
     final all = await repo.list(sort: _sort);
     final now = DateTime.now();
     final filtered = _filter == null
         ? all
-        : all.where((e) => e.statusAt(now) == _filter).toList();
-    return TokenListState(entries: filtered, sort: _sort, filter: _filter);
+        : all.where((e) => e.statusAt(now, soonDays: lead) == _filter).toList();
+    return TokenListState(
+        entries: filtered, sort: _sort, filter: _filter, leadDays: lead);
   }
 
   Future<void> _refresh() async {

@@ -31,7 +31,8 @@ class ScanService {
   /// grouped scan so desktop callers can update the tray tooltip.
   /// Idempotent per cadence for the no-expiry warning.
   Future<Map<TokenStatus, List<TokenEntry>>> run() async {
-    final scan = await repo.scanStatus();
+    final lead = await settings.getExpiryLead();
+    final scan = await repo.scanStatus(soonDays: lead.days);
     final warn = await _shouldWarnNoExpiry();
     final l10n = await AppLocalizations.delegate.load(_deviceLocale());
     await notifier.notifyFromScan(scan, warnNoExpiry: warn, l10n: l10n);
