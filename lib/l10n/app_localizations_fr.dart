@@ -321,6 +321,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get passphraseMin8 => '8 caractères min.';
 
   @override
+  String get syncProviderFolder => 'Dossier (SAF)';
+
+  @override
+  String get syncProviderDrive => 'Google Drive';
+
+  @override
+  String get syncDriveConnect => 'Connecter Google Drive';
+
+  @override
+  String get syncDriveNotConnected => 'Non connecté';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count jeton(s) expiré(s)';
   }

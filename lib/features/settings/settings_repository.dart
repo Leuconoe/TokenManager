@@ -29,6 +29,7 @@ class SettingsRepository {
   static const _kAutoStart = 'tm_autostart_v1'; // desktop launch-at-login
   static const _kSyncEnabled = 'tm_sync_enabled_v1';
   static const _kSyncFolder = 'tm_sync_folder_v1';
+  static const _kSyncProvider = 'tm_sync_provider_v1'; // 'folder' | 'drive'
   static const _kSyncPass = 'tm_sync_pass_v1';
   static const _kSyncLast = 'tm_sync_last_v1';
   final FlutterSecureStorage _storage;
@@ -95,6 +96,12 @@ class SettingsRepository {
       await _storage.write(key: _kSyncFolder, value: path);
     }
   }
+
+  /// 'folder' (SAF/desktop path) or 'drive' (Google Drive API, Android).
+  Future<String> getSyncProvider() async =>
+      (await _storage.read(key: _kSyncProvider)) == 'drive' ? 'drive' : 'folder';
+  Future<void> setSyncProvider(String v) =>
+      _storage.write(key: _kSyncProvider, value: v);
 
   Future<String?> getSyncPassphrase() => _storage.read(key: _kSyncPass);
   Future<void> setSyncPassphrase(String? p) async {

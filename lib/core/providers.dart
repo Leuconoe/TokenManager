@@ -13,6 +13,7 @@ import 'scan/autostart_service.dart';
 import 'scan/desktop_scheduler.dart';
 import 'scan/scan_scheduler.dart';
 import 'scan/scan_service.dart';
+import 'sync/drive_auth_service.dart';
 import 'sync/sync_controller.dart';
 import 'update/update_service.dart';
 import '../features/backup/data/backup_repository.dart';
@@ -82,11 +83,15 @@ final scanSchedulerProvider = Provider<ScanScheduler>((ref) {
 
 final updateServiceProvider = Provider<UpdateService>((ref) => UpdateService());
 
+final driveAuthServiceProvider =
+    Provider<DriveAuthService>((ref) => DriveAuthService());
+
 final syncControllerProvider = Provider<SyncController>(
   (ref) => SyncController(
     ref.watch(tokenRepositoryProvider),
     ref.watch(cryptoPortProvider),
     ref.watch(settingsRepositoryProvider),
+    ref.watch(driveAuthServiceProvider),
   ),
 );
 

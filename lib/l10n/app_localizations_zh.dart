@@ -307,6 +307,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get passphraseMin8 => '至少 8 位';
 
   @override
+  String get syncProviderFolder => '文件夹 (SAF)';
+
+  @override
+  String get syncProviderDrive => 'Google Drive';
+
+  @override
+  String get syncDriveConnect => '连接 Google Drive';
+
+  @override
+  String get syncDriveNotConnected => '未连接';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count 个已过期令牌';
   }
@@ -661,6 +673,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get passphraseMin8 => '至少 8 個字元';
+
+  @override
+  String get syncProviderFolder => '資料夾 (SAF)';
+
+  @override
+  String get syncProviderDrive => 'Google Drive';
+
+  @override
+  String get syncDriveConnect => '連接 Google Drive';
+
+  @override
+  String get syncDriveNotConnected => '未連接';
 
   @override
   String notifExpiredTitle(int count) {

@@ -310,6 +310,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get passphraseMin8 => '8자 이상';
 
   @override
+  String get syncProviderFolder => '폴더 (SAF)';
+
+  @override
+  String get syncProviderDrive => 'Google Drive';
+
+  @override
+  String get syncDriveConnect => 'Google Drive 연결';
+
+  @override
+  String get syncDriveNotConnected => '연결 안 됨';
+
+  @override
   String notifExpiredTitle(int count) {
     return '만료된 토큰 $count건';
   }

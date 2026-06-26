@@ -310,6 +310,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get passphraseMin8 => '8文字以上';
 
   @override
+  String get syncProviderFolder => 'フォルダ (SAF)';
+
+  @override
+  String get syncProviderDrive => 'Google Drive';
+
+  @override
+  String get syncDriveConnect => 'Google Drive を接続';
+
+  @override
+  String get syncDriveNotConnected => '未接続';
+
+  @override
   String notifExpiredTitle(int count) {
     return '期限切れトークン $count 件';
   }

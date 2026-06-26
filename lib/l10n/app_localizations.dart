@@ -665,6 +665,30 @@ abstract class AppLocalizations {
   /// **'8자 이상'**
   String get passphraseMin8;
 
+  /// No description provided for @syncProviderFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더 (SAF)'**
+  String get syncProviderFolder;
+
+  /// No description provided for @syncProviderDrive.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google Drive'**
+  String get syncProviderDrive;
+
+  /// No description provided for @syncDriveConnect.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google Drive 연결'**
+  String get syncDriveConnect;
+
+  /// No description provided for @syncDriveNotConnected.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결 안 됨'**
+  String get syncDriveNotConnected;
+
   /// No description provided for @notifExpiredTitle.
   ///
   /// In ko, this message translates to:

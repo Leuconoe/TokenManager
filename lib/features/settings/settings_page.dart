@@ -21,6 +21,10 @@ final _syncFolderProvider = FutureProvider<String?>(
 final _syncPassSetProvider = FutureProvider<bool>((ref) async =>
     ((await ref.watch(settingsRepositoryProvider).getSyncPassphrase()) ?? '')
         .isNotEmpty);
+final _syncProviderProvider = FutureProvider<String>(
+    (ref) => ref.watch(settingsRepositoryProvider).getSyncProvider());
+final _driveEmailProvider = FutureProvider<String?>(
+    (ref) => ref.watch(driveAuthServiceProvider).currentEmail());
 
 final _intervalProvider = FutureProvider<NoExpiryWarnInterval>((ref) =>
     ref.watch(settingsRepositoryProvider).getNoExpiryInterval());
@@ -130,8 +134,36 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              ListTile(
-                title: Text(l.syncFolderTitle),
+              if (Platform.isAndroid)
+                RadioGroup<String>(
+                  groupValue: ref.watch(_syncProviderProvider).valueOrNull ?? 'folder',
+                  onChanged: (v) async {
+                    await ref.read(settingsRepositoryProvider).setSyncProvider(v!);
+                    ref.invalidate(_syncProviderProvider);
+                  },
+                  child: Column(children: [
+                    RadioListTile<String>(
+                        value: 'folder', dense: true, title: Text(l.syncProviderFolder)),
+                    RadioListTile<String>(
+                        value: 'drive', dense: true, title: Text(l.syncProviderDrive)),
+                  ]),
+                ),
+              if (Platform.isAndroid &&
+                  (ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'drive')
+                ListTile(
+                  leading: const Icon(Icons.account_circle_outlined),
+                  title: Text(l.syncDriveConnect),
+                  subtitle: Text(ref.watch(_driveEmailProvider).valueOrNull ??
+                      l.syncDriveNotConnected),
+                  onTap: () async {
+                    await ref.read(driveAuthServiceProvider).signIn();
+                    ref.invalidate(_driveEmailProvider);
+                  },
+                ),
+              if (!Platform.isAndroid ||
+                  (ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'folder')
+                ListTile(
+                  title: Text(l.syncFolderTitle),
                 subtitle: Text(ref.watch(_syncFolderProvider).valueOrNull ??
                     l.syncValueNotSet),
                 trailing: const Icon(Icons.folder_open),
