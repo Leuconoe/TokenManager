@@ -244,6 +244,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les données sont chiffrées avec une clé Keystore de l\'appareil. Aucune clé n\'est dans le code : impossible de récupérer par décompilation ou copie vers un autre appareil. Sur les appareils rootés, seul un avertissement s\'affiche, sans blocage.';
 
   @override
+  String get captureProtectionTitle => 'Bloquer les captures d\'écran';
+
+  @override
+  String get captureProtectionSubtitle =>
+      'Empêche les captures et masque le contenu dans l\'aperçu des récents (Android)';
+
+  @override
+  String get debugLogTitle => 'Journal de débogage';
+
+  @override
+  String get debugLogClear => 'Effacer';
+
+  @override
   String get settingsCheckUpdate => 'Rechercher des mises à jour';
 
   @override
@@ -306,6 +319,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncNowAction => 'Synchroniser maintenant';
 
   @override
+  String get syncInProgress => 'Synchronisation…';
+
+  @override
+  String get syncIntervalTitle => 'Synchro automatique';
+
+  @override
+  String get syncIntervalSubtitle =>
+      'Synchronise automatiquement à l\'intervalle choisi quand la synchro est activée';
+
+  @override
+  String get syncInterval5m => 'Toutes les 5 minutes';
+
+  @override
+  String get syncInterval1h => 'Toutes les heures';
+
+  @override
   String syncResultDone(int count) {
     return '$count élément(s) synchronisé(s)';
   }
@@ -331,6 +360,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => 'Non connecté';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Échec de la connexion à Google Drive. Vérifiez la configuration OAuth (package + SHA-1).';
+
+  @override
+  String get syncPassMismatchTitle => 'Phrase de synchro incorrecte';
+
+  @override
+  String get syncPassMismatchBody =>
+      'La phrase de synchronisation ne correspond pas aux données déjà dans le cloud. Saisissez la même phrase que sur l\'autre appareil, ou réinitialisez en supprimant le fichier du cloud.';
+
+  @override
+  String get syncPassReenter => 'Ressaisir la phrase';
 
   @override
   String notifExpiredTitle(int count) {

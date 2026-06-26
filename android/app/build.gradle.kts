@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.token_manager"
+    namespace = "sw2.io.tokenmanager"
     // Plugins (flutter_plugin_android_lifecycle) require API 36+.
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
@@ -29,8 +29,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.token_manager"
+        applicationId = "sw2.io.tokenmanager"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // SQLCipher + Keystore setUserAuthenticationRequired require API 23+.

@@ -1,13 +1,13 @@
 name: Build & Release
 
-# main push 시 Android APK + Windows + 크롬 익스텐션을 병렬 빌드하고
-# 하나의 GitHub Release(build-<run>)에 모읍니다. 문서/마크다운만 바뀌면 생략.
+# main push에서 pubspec.yaml 의 version 이 올라갔을 때만 (= 해당 버전 태그가
+# 아직 없을 때만) Android APK + Windows + 크롬 익스텐션을 병렬 빌드하고 하나의
+# GitHub Release(v<version>)에 모읍니다. workflow_dispatch 는 항상 강제 실행.
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
+    paths:
+      - 'pubspec.yaml'
   workflow_dispatch: {}
 
 permissions:
@@ -21,8 +21,38 @@ env:
   FLUTTER_VERSION: '3.44.2'
 
 jobs:
+  # --------------------------------------------------------------- Version gate
+  # Releases only when pubspec's version is new (no matching tag yet).
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      ver: ${{ steps.v.outputs.ver }}
+      tag: ${{ steps.v.outputs.tag }}
+      should_release: ${{ steps.v.outputs.should_release }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 } # need tags for the existence check
+      - id: v
+        run: |
+          VER=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//' | tr -d '[:space:]')
+          TAG="v${VER/+/-}" # git-safe tag (1.0.0+3 -> v1.0.0-3)
+          echo "ver=$VER" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual dispatch — forcing release."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          elif git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists — version not bumped, skipping build."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New version $VER ($TAG) — will build & release."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
   # ---------------------------------------------------------------- Android
   android:
+    needs: version
+    if: needs.version.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,6 +87,8 @@ jobs:
 
   # ---------------------------------------------------------------- Windows
   windows:
+    needs: version
+    if: needs.version.outputs.should_release == 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -93,6 +125,8 @@ jobs:
 
   # -------------------------------------------------------------- Extension
   extension:
+    needs: version
+    if: needs.version.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -113,27 +147,22 @@ jobs:
 
   # ---------------------------------------------------------------- Release
   release:
-    needs: [android, windows, extension]
+    needs: [version, android, windows, extension]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 } # release-notes 자동 생성용
       - uses: actions/download-artifact@v4
         with: { path: artifacts }
-      - name: Resolve version
-        id: meta
-        run: echo "ver=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')" >> "$GITHUB_OUTPUT"
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
-          name: TokenManager ${{ steps.meta.outputs.ver }} (build ${{ github.run_number }})
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: TokenManager ${{ needs.version.outputs.ver }}
           generate_release_notes: true
           body: |
-            ### TokenManager 자동 빌드 #${{ github.run_number }}
-            - **Version**: `${{ steps.meta.outputs.ver }}` · **Commit**: ${{ github.sha }}
+            ### TokenManager ${{ needs.version.outputs.ver }}
+            - **Version**: `${{ needs.version.outputs.ver }}` · **Commit**: ${{ github.sha }}
             - 📱 Android APK · 🖥️ Windows x64 zip · 🧩 Chrome 익스텐션 zip
-
-            > ⚠️ Android/Windows는 debug 키 서명. 배포 전 release 키 구성 필요.
           files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

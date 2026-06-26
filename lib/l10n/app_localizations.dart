@@ -533,6 +533,30 @@ abstract class AppLocalizations {
   /// **'데이터는 기기 Keystore 키로 암호화됩니다. 코드에 키가 없어 디컴파일·타기기 복사로 복원할 수 없습니다. 루팅 기기에서는 경고만 표시되며 차단하지 않습니다.'**
   String get securityInfo;
 
+  /// No description provided for @captureProtectionTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 캡처 차단'**
+  String get captureProtectionTitle;
+
+  /// No description provided for @captureProtectionSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'스크린샷을 막고 최근 앱 미리보기에서 내용을 숨깁니다 (Android)'**
+  String get captureProtectionSubtitle;
+
+  /// No description provided for @debugLogTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'디버그 로그'**
+  String get debugLogTitle;
+
+  /// No description provided for @debugLogClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'지우기'**
+  String get debugLogClear;
+
   /// No description provided for @settingsCheckUpdate.
   ///
   /// In ko, this message translates to:
@@ -641,6 +665,36 @@ abstract class AppLocalizations {
   /// **'지금 동기화'**
   String get syncNowAction;
 
+  /// No description provided for @syncInProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화 중…'**
+  String get syncInProgress;
+
+  /// No description provided for @syncIntervalTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'자동 동기화'**
+  String get syncIntervalTitle;
+
+  /// No description provided for @syncIntervalSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화가 켜져 있을 때 선택한 주기로 자동 동기화'**
+  String get syncIntervalSubtitle;
+
+  /// No description provided for @syncInterval5m.
+  ///
+  /// In ko, this message translates to:
+  /// **'5분마다'**
+  String get syncInterval5m;
+
+  /// No description provided for @syncInterval1h.
+  ///
+  /// In ko, this message translates to:
+  /// **'1시간마다'**
+  String get syncInterval1h;
+
   /// No description provided for @syncResultDone.
   ///
   /// In ko, this message translates to:
@@ -688,6 +742,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'연결 안 됨'**
   String get syncDriveNotConnected;
+
+  /// No description provided for @syncDriveSignInFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google Drive 로그인 실패. OAuth 설정(패키지명 + SHA-1)을 확인하세요.'**
+  String get syncDriveSignInFailed;
+
+  /// No description provided for @syncPassMismatchTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화 패스프레이즈 불일치'**
+  String get syncPassMismatchTitle;
+
+  /// No description provided for @syncPassMismatchBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'클라우드에 이미 있는 데이터와 동기화 패스프레이즈가 다릅니다. 다른 기기에서 사용한 것과 동일한 패스프레이즈를 입력하거나, 클라우드 파일을 삭제해 동기화를 초기화하세요.'**
+  String get syncPassMismatchBody;
+
+  /// No description provided for @syncPassReenter.
+  ///
+  /// In ko, this message translates to:
+  /// **'패스프레이즈 다시 입력'**
+  String get syncPassReenter;
 
   /// No description provided for @notifExpiredTitle.
   ///

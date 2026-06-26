@@ -3,3 +3,5 @@ dist/
 *.crx
 *.pem
 .vite/
+.env
+.env.local

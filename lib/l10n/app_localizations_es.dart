@@ -242,6 +242,19 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los datos se cifran con una clave del Keystore del dispositivo. No hay clave en el código, por lo que no se puede recuperar descompilando ni copiando a otro dispositivo. En dispositivos con root solo se muestra un aviso, sin bloquear el acceso.';
 
   @override
+  String get captureProtectionTitle => 'Bloquear capturas de pantalla';
+
+  @override
+  String get captureProtectionSubtitle =>
+      'Evita capturas y oculta el contenido en la vista de recientes (Android)';
+
+  @override
+  String get debugLogTitle => 'Registro de depuración';
+
+  @override
+  String get debugLogClear => 'Borrar';
+
+  @override
   String get settingsCheckUpdate => 'Buscar actualizaciones';
 
   @override
@@ -304,6 +317,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncNowAction => 'Sincronizar ahora';
 
   @override
+  String get syncInProgress => 'Sincronizando…';
+
+  @override
+  String get syncIntervalTitle => 'Sincronización automática';
+
+  @override
+  String get syncIntervalSubtitle =>
+      'Sincroniza automáticamente en el intervalo elegido mientras la sincronización está activada';
+
+  @override
+  String get syncInterval5m => 'Cada 5 minutos';
+
+  @override
+  String get syncInterval1h => 'Cada hora';
+
+  @override
   String syncResultDone(int count) {
     return '$count elemento(s) sincronizado(s)';
   }
@@ -329,6 +358,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => 'No conectado';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Error al iniciar sesión en Google Drive. Revisa la configuración de OAuth (paquete + SHA-1).';
+
+  @override
+  String get syncPassMismatchTitle => 'Frase de sincronización no coincide';
+
+  @override
+  String get syncPassMismatchBody =>
+      'La frase de sincronización no coincide con los datos ya en la nube. Introduce la misma frase que usaste en el otro dispositivo, o restablece la sincronización eliminando el archivo de la nube.';
+
+  @override
+  String get syncPassReenter => 'Reintroducir frase';
 
   @override
   String notifExpiredTitle(int count) {

@@ -241,6 +241,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Data is encrypted with a device Keystore key. No key exists in the code, so it cannot be recovered by decompiling or copying to another device. On rooted devices a warning is shown but access is not blocked.';
 
   @override
+  String get captureProtectionTitle => 'Block screenshots';
+
+  @override
+  String get captureProtectionSubtitle =>
+      'Prevents screenshots and hides content in the recents preview (Android)';
+
+  @override
+  String get debugLogTitle => 'Debug log';
+
+  @override
+  String get debugLogClear => 'Clear';
+
+  @override
   String get settingsCheckUpdate => 'Check for updates';
 
   @override
@@ -303,6 +316,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncNowAction => 'Sync now';
 
   @override
+  String get syncInProgress => 'Syncing…';
+
+  @override
+  String get syncIntervalTitle => 'Auto-sync';
+
+  @override
+  String get syncIntervalSubtitle =>
+      'Automatically sync at the chosen interval while sync is on';
+
+  @override
+  String get syncInterval5m => 'Every 5 minutes';
+
+  @override
+  String get syncInterval1h => 'Every hour';
+
+  @override
   String syncResultDone(int count) {
     return 'Synced $count item(s)';
   }
@@ -327,6 +356,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => 'Not connected';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Google Drive sign-in failed. Check OAuth setup (package + SHA-1).';
+
+  @override
+  String get syncPassMismatchTitle => 'Sync passphrase mismatch';
+
+  @override
+  String get syncPassMismatchBody =>
+      'The sync passphrase doesn\'t match the data already in the cloud. Enter the same passphrase you used on your other device, or reset sync by deleting the cloud file.';
+
+  @override
+  String get syncPassReenter => 'Re-enter passphrase';
 
   @override
   String notifExpiredTitle(int count) {

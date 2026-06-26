@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.0.0
+
+First stable release.
+
+- **Cross-platform sync (opt-in, E2E-encrypted)**: optional Google Drive sync
+  shared across Android, Windows, and the Chrome extension. All three clients
+  use the Drive API (`drive.file` scope) into a visible `My Drive/TokenManager/`
+  folder; the cloud holds only the passphrase-encrypted `.tmbk` blob (same
+  Argon2id + AES-256-GCM crypto as backups). Merge is keyed by service name with
+  newest-wins + tombstone-aware deletion, and a pre-write re-check guards against
+  lost updates. Desktop also supports a plain synced-folder provider.
+  - Auth: Android `google_sign_in`; Windows `googleapis_auth` loopback flow;
+    extension `chrome.identity.launchWebAuthFlow`. OAuth client ids/secrets come
+    only from env / `--dart-define` — never committed.
+- **Auto-sync cadence**: off / every 5 minutes / every hour while sync is on
+  (app). The extension syncs on each popup open.
+- **Quick sync**: a sync button in the main toolbar (app + extension) with
+  in-progress and result toasts.
+- **Capture protection toggle** (Android): `FLAG_SECURE` on by default, can be
+  turned off in Settings.
+- **Open URL**: a shortcut button next to a token's URL opens it in the browser.
+- **Distinct passphrase-mismatch handling** on sync, separate from connection
+  errors.
+- **Debug log** tab in Settings (app + extension) for troubleshooting.
+- Package id is now `sw2.io.tokenmanager`.
+
 ## v0.1.1
 
 - **Release signing**: Android release builds are now signed with a real release

@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'core/platform/secure_screen.dart';
 import 'core/providers.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/settings/locale_controller.dart';
@@ -18,10 +19,13 @@ bool get _isDesktop => Platform.isWindows || Platform.isLinux || Platform.isMacO
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Block screenshots / recents preview for the sensitive vault (FLAG_SECURE).
-  // (Applied natively in MainActivity; flag here documents intent.)
-
   final container = ProviderContainer();
+
+  // Block screenshots / recents preview for the sensitive vault (FLAG_SECURE).
+  // Secure by default natively in MainActivity; re-apply the user preference
+  // (Android lets the user opt out in Settings).
+  await SecureScreen.apply(
+      await container.read(settingsRepositoryProvider).getCaptureProtection());
 
   // Desktop: tray-resident window shell.
   if (_isDesktop) {
@@ -53,6 +57,9 @@ Future<void> main() async {
 
   // Folder sync: pull + merge on launch (no-op if disabled/not configured).
   await container.read(syncControllerProvider).syncQuietly();
+
+  // Auto-sync heartbeat (5 min / 1 hour cadence while enabled).
+  container.read(periodicSyncProvider).start();
 
   // Skip the lock gate on devices with no secure lock screen (no biometric
   // and no device credential) — otherwise the user would be stuck. Data

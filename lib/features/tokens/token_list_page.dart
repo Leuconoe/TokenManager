@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/crypto/passphrase_crypto.dart' show BackupAuthException;
 import '../../core/domain/token_entry.dart';
 import '../../core/domain/token_status.dart';
+import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/status_badge.dart';
 import '../backup/backup_page.dart';
@@ -37,6 +40,11 @@ class TokenListPage extends ConsumerWidget {
               PopupMenuItem(
                   value: TokenSort.recentlyUpdated, child: Text(l.sortUpdated)),
             ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.sync),
+            tooltip: l.syncNowAction,
+            onPressed: () => _menuSync(context, ref, l),
           ),
           IconButton(
             icon: const Icon(Icons.backup_outlined),
@@ -79,6 +87,34 @@ class TokenListPage extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
     );
+  }
+}
+
+/// Quick sync from the main menu. Mirrors Settings' "Sync now", incl. the
+/// passphrase-mismatch distinction.
+Future<void> _menuSync(
+    BuildContext context, WidgetRef ref, AppLocalizations l) async {
+  final m = ScaffoldMessenger.of(context);
+  m.showSnackBar(SnackBar(
+      content: Text(l.syncInProgress), duration: const Duration(seconds: 30)));
+  try {
+    final n = await ref.read(syncControllerProvider).syncNow();
+    if (!context.mounted) return;
+    m.hideCurrentSnackBar();
+    if (n == null) {
+      m.showSnackBar(SnackBar(content: Text(l.syncNeedSetup)));
+      return;
+    }
+    ref.invalidate(tokenListProvider);
+    m.showSnackBar(SnackBar(content: Text(l.syncResultDone(n))));
+  } on BackupAuthException {
+    if (!context.mounted) return;
+    m.hideCurrentSnackBar();
+    m.showSnackBar(SnackBar(content: Text(l.syncPassMismatchTitle)));
+  } catch (_) {
+    if (!context.mounted) return;
+    m.hideCurrentSnackBar();
+    m.showSnackBar(SnackBar(content: Text(l.syncResultFailed)));
   }
 }
 
@@ -128,10 +164,24 @@ class _TokenTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (entry.url.isNotEmpty)
-            Text(entry.url,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.indigo, fontSize: 12)),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(entry.url,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.indigo, fontSize: 12)),
+                ),
+                InkWell(
+                  onTap: () => _openUrl(entry.url),
+                  borderRadius: BorderRadius.circular(16),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.open_in_new, size: 16, color: Colors.indigo),
+                  ),
+                ),
+              ],
+            ),
           Text(_subtitle(context, entry, now)),
         ],
       ),
@@ -139,6 +189,13 @@ class _TokenTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
           builder: (_) => TokenEditPage(existing: entry))),
     );
+  }
+
+  Future<void> _openUrl(String raw) async {
+    var u = raw.trim();
+    if (!u.startsWith('http://') && !u.startsWith('https://')) u = 'https://$u';
+    final uri = Uri.tryParse(u);
+    if (uri != null) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   String _subtitle(BuildContext context, TokenEntry e, DateTime now) {

@@ -13,7 +13,10 @@ import 'scan/autostart_service.dart';
 import 'scan/desktop_scheduler.dart';
 import 'scan/scan_scheduler.dart';
 import 'scan/scan_service.dart';
+import 'sync/drive_auth.dart';
 import 'sync/drive_auth_service.dart';
+import 'sync/desktop_drive_auth_service.dart';
+import 'sync/periodic_sync.dart';
 import 'sync/sync_controller.dart';
 import 'update/update_service.dart';
 import '../features/backup/data/backup_repository.dart';
@@ -83,8 +86,8 @@ final scanSchedulerProvider = Provider<ScanScheduler>((ref) {
 
 final updateServiceProvider = Provider<UpdateService>((ref) => UpdateService());
 
-final driveAuthServiceProvider =
-    Provider<DriveAuthService>((ref) => DriveAuthService());
+final driveAuthServiceProvider = Provider<DriveAuth>((ref) =>
+    Platform.isAndroid ? DriveAuthService() : DesktopDriveAuthService());
 
 final syncControllerProvider = Provider<SyncController>(
   (ref) => SyncController(
@@ -94,6 +97,11 @@ final syncControllerProvider = Provider<SyncController>(
     ref.watch(driveAuthServiceProvider),
   ),
 );
+
+final periodicSyncProvider = Provider<PeriodicSync>((ref) => PeriodicSync(
+      ref.watch(settingsRepositoryProvider),
+      ref.watch(syncControllerProvider),
+    ));
 
 /// Whether the vault is currently unlocked (gated by biometric auth).
 final appUnlockedProvider = StateProvider<bool>((ref) => false);

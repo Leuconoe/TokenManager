@@ -63,3 +63,7 @@ android/key.properties
 
 # Local signing credentials note — NEVER commit
 signing-credentials.local.txt
+
+# Desktop OAuth client id/secret for Drive sync — NEVER commit
+# (passed via flutter --dart-define-from-file=oauth.local.json)
+oauth.local.json

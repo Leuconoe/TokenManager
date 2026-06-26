@@ -1,7 +1,7 @@
 // Encrypted vault persisted in chrome.storage.local, unlocked per session
 // with a passphrase (Argon2id-derived key). Token metadata only.
 
-import { SOON_DAYS, type TokenEntry } from './domain';
+import { SOON_DAYS, activeEntries, type TokenEntry } from './domain';
 import { decryptVault, encryptVault, type VaultBlob } from './crypto';
 
 const KEY = 'tm_vault_v1';
@@ -36,11 +36,14 @@ export async function unlock(passphrase: string): Promise<TokenEntry[]> {
 /** Encrypt + persist the full entry set under the session passphrase, and
  * refresh the plaintext expiry schedule the background worker reads. */
 export async function save(passphrase: string, entries: TokenEntry[]): Promise<void> {
+  // Persist ALL entries (tombstones included, for sync); the schedule the
+  // background worker reads counts only live entries.
   const blob = await encryptVault(passphrase, JSON.stringify(entries));
+  const live = activeEntries(entries);
   const schedule: Schedule = {
     soonDays: SOON_DAYS,
-    expiries: entries.filter((e) => e.expiresAt != null).map((e) => e.expiresAt!),
-    noExpiry: entries.filter((e) => e.expiresAt == null).length,
+    expiries: live.filter((e) => e.expiresAt != null).map((e) => e.expiresAt!),
+    noExpiry: live.filter((e) => e.expiresAt == null).length,
   };
   await chrome.storage.local.set({ [KEY]: blob, [SCHEDULE_KEY]: schedule });
 }

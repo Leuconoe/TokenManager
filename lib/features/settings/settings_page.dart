@@ -8,6 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saf_util/saf_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/crypto/passphrase_crypto.dart' show BackupAuthException;
+import '../../core/debug/debug_log.dart';
+import '../../core/platform/secure_screen.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../tokens/token_providers.dart';
@@ -34,6 +37,10 @@ final _expiryLeadProvider = FutureProvider<ExpiryLeadInterval>((ref) =>
 
 final _autoStartProvider = FutureProvider<bool>(
     (ref) => ref.watch(settingsRepositoryProvider).getAutoStart());
+final _captureProvider = FutureProvider<bool>(
+    (ref) => ref.watch(settingsRepositoryProvider).getCaptureProtection());
+final _syncIntervalProvider = FutureProvider<SyncInterval>(
+    (ref) => ref.watch(settingsRepositoryProvider).getSyncInterval());
 
 bool get _isDesktop =>
     Platform.isWindows || Platform.isLinux || Platform.isMacOS;
@@ -134,34 +141,39 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              if (Platform.isAndroid)
-                RadioGroup<String>(
-                  groupValue: ref.watch(_syncProviderProvider).valueOrNull ?? 'folder',
-                  onChanged: (v) async {
-                    await ref.read(settingsRepositoryProvider).setSyncProvider(v!);
-                    ref.invalidate(_syncProviderProvider);
-                  },
-                  child: Column(children: [
-                    RadioListTile<String>(
-                        value: 'folder', dense: true, title: Text(l.syncProviderFolder)),
-                    RadioListTile<String>(
-                        value: 'drive', dense: true, title: Text(l.syncProviderDrive)),
-                  ]),
-                ),
-              if (Platform.isAndroid &&
-                  (ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'drive')
+              RadioGroup<String>(
+                groupValue: ref.watch(_syncProviderProvider).valueOrNull ?? 'folder',
+                onChanged: (v) async {
+                  await ref.read(settingsRepositoryProvider).setSyncProvider(v!);
+                  ref.invalidate(_syncProviderProvider);
+                },
+                child: Column(children: [
+                  RadioListTile<String>(
+                      value: 'folder', dense: true, title: Text(l.syncProviderFolder)),
+                  RadioListTile<String>(
+                      value: 'drive', dense: true, title: Text(l.syncProviderDrive)),
+                ]),
+              ),
+              if ((ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'drive')
                 ListTile(
                   leading: const Icon(Icons.account_circle_outlined),
                   title: Text(l.syncDriveConnect),
                   subtitle: Text(ref.watch(_driveEmailProvider).valueOrNull ??
                       l.syncDriveNotConnected),
                   onTap: () async {
-                    await ref.read(driveAuthServiceProvider).signIn();
-                    ref.invalidate(_driveEmailProvider);
+                    final m = ScaffoldMessenger.of(context);
+                    try {
+                      final email =
+                          await ref.read(driveAuthServiceProvider).signIn();
+                      ref.invalidate(_driveEmailProvider);
+                      if (email == null) return; // user cancelled
+                    } catch (_) {
+                      m.showSnackBar(
+                          SnackBar(content: Text(l.syncDriveSignInFailed)));
+                    }
                   },
                 ),
-              if (!Platform.isAndroid ||
-                  (ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'folder')
+              if ((ref.watch(_syncProviderProvider).valueOrNull ?? 'folder') == 'folder')
                 ListTile(
                   title: Text(l.syncFolderTitle),
                 subtitle: Text(ref.watch(_syncFolderProvider).valueOrNull ??
@@ -198,6 +210,28 @@ class SettingsPage extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _runSync(context, ref, l),
               ),
+              ListTile(
+                leading: const Icon(Icons.schedule),
+                title: Text(l.syncIntervalTitle),
+                subtitle: Text(l.syncIntervalSubtitle),
+                isThreeLine: true,
+              ),
+              RadioGroup<SyncInterval>(
+                groupValue:
+                    ref.watch(_syncIntervalProvider).valueOrNull ?? SyncInterval.off,
+                onChanged: (v) async {
+                  await ref.read(settingsRepositoryProvider).setSyncInterval(v!);
+                  ref.invalidate(_syncIntervalProvider);
+                },
+                child: Column(children: [
+                  RadioListTile<SyncInterval>(
+                      value: SyncInterval.off, dense: true, title: Text(l.intervalOff)),
+                  RadioListTile<SyncInterval>(
+                      value: SyncInterval.min5, dense: true, title: Text(l.syncInterval5m)),
+                  RadioListTile<SyncInterval>(
+                      value: SyncInterval.hour1, dense: true, title: Text(l.syncInterval1h)),
+                ]),
+              ),
             ],
             const Divider(),
             ListTile(
@@ -212,6 +246,51 @@ class SettingsPage extends ConsumerWidget {
               title: Text(l.securitySectionTitle),
               subtitle: Text(l.securityInfo),
               isThreeLine: true,
+            ),
+            if (Platform.isAndroid)
+              SwitchListTile(
+                secondary: const Icon(Icons.screenshot_monitor_outlined),
+                title: Text(l.captureProtectionTitle),
+                subtitle: Text(l.captureProtectionSubtitle),
+                value: ref.watch(_captureProvider).valueOrNull ?? true,
+                onChanged: (v) async {
+                  await ref.read(settingsRepositoryProvider)
+                      .setCaptureProtection(v);
+                  await SecureScreen.apply(v);
+                  ref.invalidate(_captureProvider);
+                },
+              ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.bug_report_outlined),
+              title: Text(l.debugLogTitle),
+              trailing: TextButton(
+                onPressed: () => DebugLog.instance.clear(),
+                child: Text(l.debugLogClear),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ValueListenableBuilder<List<String>>(
+                  valueListenable: DebugLog.instance.entries,
+                  builder: (context, lines, _) => SingleChildScrollView(
+                    reverse: true,
+                    child: SelectableText(
+                      lines.isEmpty ? '—' : lines.join('\n'),
+                      style: const TextStyle(
+                          fontFamily: 'monospace', fontSize: 11),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -267,17 +346,43 @@ class SettingsPage extends ConsumerWidget {
   Future<void> _runSync(
       BuildContext context, WidgetRef ref, AppLocalizations l) async {
     final m = ScaffoldMessenger.of(context);
+    m.showSnackBar(SnackBar(
+        content: Text(l.syncInProgress), duration: const Duration(seconds: 30)));
     try {
       final n = await ref.read(syncControllerProvider).syncNow();
       if (!context.mounted) return;
+      m.hideCurrentSnackBar();
       if (n == null) {
         m.showSnackBar(SnackBar(content: Text(l.syncNeedSetup)));
         return;
       }
       ref.invalidate(tokenListProvider); // reflect merged result
       m.showSnackBar(SnackBar(content: Text(l.syncResultDone(n))));
+    } on BackupAuthException {
+      // Distinct handling: the sync passphrase doesn't match the remote file.
+      if (!context.mounted) return;
+      m.hideCurrentSnackBar();
+      final reenter = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.syncPassMismatchTitle),
+          content: Text(l.syncPassMismatchBody),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l.actionCancel)),
+            FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(l.syncPassReenter)),
+          ],
+        ),
+      );
+      if (reenter == true && context.mounted) {
+        await _setSyncPass(context, ref, l);
+      }
     } catch (_) {
       if (!context.mounted) return;
+      m.hideCurrentSnackBar();
       m.showSnackBar(SnackBar(content: Text(l.syncResultFailed)));
     }
   }

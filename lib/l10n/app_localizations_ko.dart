@@ -235,6 +235,19 @@ class AppLocalizationsKo extends AppLocalizations {
       '데이터는 기기 Keystore 키로 암호화됩니다. 코드에 키가 없어 디컴파일·타기기 복사로 복원할 수 없습니다. 루팅 기기에서는 경고만 표시되며 차단하지 않습니다.';
 
   @override
+  String get captureProtectionTitle => '화면 캡처 차단';
+
+  @override
+  String get captureProtectionSubtitle =>
+      '스크린샷을 막고 최근 앱 미리보기에서 내용을 숨깁니다 (Android)';
+
+  @override
+  String get debugLogTitle => '디버그 로그';
+
+  @override
+  String get debugLogClear => '지우기';
+
+  @override
   String get settingsCheckUpdate => '업데이트 확인';
 
   @override
@@ -296,6 +309,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get syncNowAction => '지금 동기화';
 
   @override
+  String get syncInProgress => '동기화 중…';
+
+  @override
+  String get syncIntervalTitle => '자동 동기화';
+
+  @override
+  String get syncIntervalSubtitle => '동기화가 켜져 있을 때 선택한 주기로 자동 동기화';
+
+  @override
+  String get syncInterval5m => '5분마다';
+
+  @override
+  String get syncInterval1h => '1시간마다';
+
+  @override
   String syncResultDone(int count) {
     return '$count건 동기화됨';
   }
@@ -320,6 +348,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => '연결 안 됨';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Google Drive 로그인 실패. OAuth 설정(패키지명 + SHA-1)을 확인하세요.';
+
+  @override
+  String get syncPassMismatchTitle => '동기화 패스프레이즈 불일치';
+
+  @override
+  String get syncPassMismatchBody =>
+      '클라우드에 이미 있는 데이터와 동기화 패스프레이즈가 다릅니다. 다른 기기에서 사용한 것과 동일한 패스프레이즈를 입력하거나, 클라우드 파일을 삭제해 동기화를 초기화하세요.';
+
+  @override
+  String get syncPassReenter => '패스프레이즈 다시 입력';
 
   @override
   String notifExpiredTitle(int count) {

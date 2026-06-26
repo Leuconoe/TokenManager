@@ -3,10 +3,11 @@
 
 import 'dart:io' show Platform;
 
+import '../debug/debug_log.dart';
 import '../domain/crypto_port.dart';
 import '../../features/settings/settings_repository.dart';
 import '../../features/tokens/data/token_repository.dart';
-import 'drive_auth_service.dart';
+import 'drive_auth.dart';
 import 'drive_sync_storage.dart';
 import 'folder_sync_storage.dart';
 import 'saf_sync_storage.dart';
@@ -17,34 +18,53 @@ class SyncController {
   final TokenRepository repo;
   final CryptoPort crypto;
   final SettingsRepository settings;
-  final DriveAuthService driveAuth;
+  final DriveAuth driveAuth;
 
   SyncController(this.repo, this.crypto, this.settings, this.driveAuth);
 
   /// Runs a sync cycle if enabled & configured. Returns merged count, or null
   /// if sync is off / not configured. Throws on wrong passphrase.
   Future<int?> syncNow() async {
-    if (!await settings.getSyncEnabled()) return null;
+    if (!await settings.getSyncEnabled()) {
+      dlog('sync: disabled');
+      return null;
+    }
     final pass = await settings.getSyncPassphrase();
-    if (pass == null || pass.isEmpty) return null;
+    if (pass == null || pass.isEmpty) {
+      dlog('sync: no passphrase');
+      return null;
+    }
 
+    final provider = await settings.getSyncProvider();
+    dlog('sync: start provider=$provider platform=${Platform.operatingSystem}');
     final SyncStorage storage;
-    if (Platform.isAndroid && await settings.getSyncProvider() == 'drive') {
+    if (provider == 'drive') {
+      // Drive API on all platforms — shared visible "TokenManager" folder.
       final api = await driveAuth.driveApi();
+      dlog('sync: driveApi=${api == null ? "null (not connected)" : "ok"}');
       if (api == null) throw StateError('drive-not-connected');
       storage = DriveSyncStorage(api);
     } else {
       final folder = await settings.getSyncFolder();
-      if (folder == null) return null;
+      if (folder == null) {
+        dlog('sync: no folder configured');
+        return null;
+      }
       // Android stores a SAF tree URI; desktop stores a filesystem path.
       storage =
           Platform.isAndroid ? SafSyncStorage(folder) : FolderSyncStorage(folder);
     }
 
-    final svc = SyncService(repo, crypto, storage);
-    final r = await svc.syncNow(pass);
-    await settings.setSyncLast(DateTime.now());
-    return r.merged;
+    try {
+      final svc = SyncService(repo, crypto, storage);
+      final r = await svc.syncNow(pass);
+      await settings.setSyncLast(DateTime.now());
+      dlog('sync: done merged=${r.merged}');
+      return r.merged;
+    } catch (e) {
+      dlog('sync: ERROR $e');
+      rethrow;
+    }
   }
 
   /// Best-effort background push (after a local change) — never throws.

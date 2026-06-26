@@ -1,7 +1,7 @@
 name: token_manager
 description: "Offline token-metadata vault with device-bound encryption (no token values stored)."
 publish_to: 'none'
-version: 0.1.1+2
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -54,10 +54,14 @@ dependencies:
   saf_util: ^3.1.0
   saf_stream: ^3.0.0
 
-  # Google Drive sync (Android) — OAuth + Drive appDataFolder.
+  # Google Drive sync — Drive API (drive.file) into a visible "TokenManager"
+  # folder, shared across Android + Windows + extension (same Cloud project).
+  # Android: google_sign_in. Windows: googleapis_auth loopback flow.
   google_sign_in: ^6.2.1
   googleapis: ^13.2.0
   extension_google_sign_in_as_googleapis_auth: ^2.0.12
+  googleapis_auth: ^1.6.0
+  http: ^1.2.0
 
   # Desktop (Windows) runtime: tray-resident + launch at login.
   # No Android impl — unused there, guarded by Platform checks.

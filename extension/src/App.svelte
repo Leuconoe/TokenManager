@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { save, unlock, vaultExists } from './lib/vault';
-  import { getExpiryLead } from './lib/settings';
-  import type { TokenEntry } from './lib/domain';
+  import { getExpiryLead, getSyncPassphrase, setSyncLast } from './lib/settings';
+  import { activeEntries, type TokenEntry } from './lib/domain';
+  import { isConnected } from './lib/drive';
+  import { syncNow } from './lib/sync';
   import { t } from './lib/i18n.svelte';
   import TokenList from './components/TokenList.svelte';
   import TokenEdit from './components/TokenEdit.svelte';
@@ -42,11 +44,52 @@
       pwInput = '';
       locked = false;
       if (!hasVault) await save(pass, entries);
+      // Quiet pull/merge/push on unlock (non-interactive; ignore failures).
+      void quietSync();
     } catch {
       err = t('pwWrong');
     } finally {
       busy = false;
     }
+  }
+
+  /** Full sync cycle: pull → merge → persist locally → push. Returns the live
+   *  count, or an error tag. interactive=true may show the Google consent UI. */
+  async function runSync(interactive: boolean): Promise<{ merged?: number; error?: string }> {
+    const syncPass = await getSyncPassphrase();
+    if (!syncPass) return { error: 'needPass' };
+    try {
+      const merged = await syncNow(syncPass, entries, interactive);
+      await persist(merged);
+      await setSyncLast(Date.now());
+      return { merged: activeEntries(merged).length };
+    } catch (e) {
+      const err = e as Error;
+      return { error: `${err?.name ?? 'error'}: ${err?.message ?? ''}` };
+    }
+  }
+
+  async function quietSync() {
+    try {
+      if ((await isConnected()) && (await getSyncPassphrase())) await runSync(false);
+    } catch {
+      /* best effort */
+    }
+  }
+
+  let syncingMain = $state(false);
+  let syncMainMsg = $state('');
+  async function doMainSync() {
+    if (syncingMain) return;
+    syncingMain = true;
+    syncMainMsg = t('syncing');
+    const r = await runSync(false);
+    if (r.error === 'needPass') syncMainMsg = t('syncNeedSetup');
+    else if (r.error?.includes('BackupAuthError')) syncMainMsg = t('syncPassMismatch');
+    else if (r.error) syncMainMsg = `${t('syncFailed')} [${r.error}]`;
+    else syncMainMsg = t('syncDone', { count: r.merged ?? 0 });
+    syncingMain = false;
+    setTimeout(() => (syncMainMsg = ''), 4000);
   }
 
   async function persist(next: TokenEntry[]) {
@@ -61,7 +104,13 @@
     view = 'list';
   }
   async function onDelete(id: string) {
-    await persist(entries.filter((e) => e.id !== id));
+    // Soft delete (tombstone) so the deletion propagates through sync instead of
+    // the entry reappearing from a remote copy.
+    const now = Date.now();
+    const next = entries.map((e) =>
+      e.id === id ? { ...e, deletedAt: now, updatedAt: now } : e,
+    );
+    await persist(next);
     view = 'list';
   }
 
@@ -108,6 +157,7 @@
       {/if}
       <h1>{title}</h1>
       {#if view === 'list'}
+        <button class="icon" title={t('syncNow')} onclick={doMainSync} disabled={syncingMain}>{syncingMain ? '…' : '🔄'}</button>
         <button class="icon" title={t('titleSettings')} onclick={() => (view = 'settings')}>⚙</button>
         <button class="icon" title={t('titleBackup')} onclick={() => (view = 'backup')}>⛁</button>
         <button class="icon" title={t('unlock')} onclick={lock}>🔒</button>
@@ -115,13 +165,14 @@
     </header>
     <main>
       {#if view === 'list'}
-        <TokenList {entries} {leadDays} onAdd={() => { editing = null; view = 'edit'; }} onEdit={(e) => { editing = e; view = 'edit'; }} />
+        {#if syncMainMsg}<div class="ok" style="margin:0 0 8px">{syncMainMsg}</div>{/if}
+        <TokenList entries={activeEntries(entries)} {leadDays} onAdd={() => { editing = null; view = 'edit'; }} onEdit={(e) => { editing = e; view = 'edit'; }} />
       {:else if view === 'edit'}
         <TokenEdit existing={editing} {onSave} {onDelete} onCancel={() => (view = 'list')} />
       {:else if view === 'backup'}
         <Backup {entries} {pass} onImported={persist} />
       {:else}
-        <Settings />
+        <Settings {runSync} />
       {/if}
     </main>
   </div>

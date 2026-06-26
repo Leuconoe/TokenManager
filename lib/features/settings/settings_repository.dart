@@ -22,6 +22,16 @@ enum NoExpiryWarnInterval {
   const NoExpiryWarnInterval(this.days);
 }
 
+/// Auto-sync cadence while sync is enabled (0 = manual only).
+enum SyncInterval {
+  off(0),
+  min5(5),
+  hour1(60);
+
+  final int minutes;
+  const SyncInterval(this.minutes);
+}
+
 class SettingsRepository {
   static const _kInterval = 'tm_noexpiry_interval_v1';
   static const _kExpiryLead = 'tm_expiry_lead_v1'; // days before expiry to warn
@@ -32,6 +42,8 @@ class SettingsRepository {
   static const _kSyncProvider = 'tm_sync_provider_v1'; // 'folder' | 'drive'
   static const _kSyncPass = 'tm_sync_pass_v1';
   static const _kSyncLast = 'tm_sync_last_v1';
+  static const _kSyncInterval = 'tm_sync_interval_v1'; // auto-sync cadence
+  static const _kCapture = 'tm_capture_protect_v1'; // Android FLAG_SECURE
   final FlutterSecureStorage _storage;
 
   SettingsRepository([FlutterSecureStorage? storage])
@@ -120,4 +132,20 @@ class SettingsRepository {
 
   Future<void> setSyncLast(DateTime t) =>
       _storage.write(key: _kSyncLast, value: t.millisecondsSinceEpoch.toString());
+
+  Future<SyncInterval> getSyncInterval() async {
+    final v = await _storage.read(key: _kSyncInterval);
+    return SyncInterval.values.firstWhere((e) => e.name == v,
+        orElse: () => SyncInterval.off);
+  }
+
+  Future<void> setSyncInterval(SyncInterval i) =>
+      _storage.write(key: _kSyncInterval, value: i.name);
+
+  /// Android screenshot/recents block (FLAG_SECURE). Default: enabled.
+  Future<bool> getCaptureProtection() async =>
+      (await _storage.read(key: _kCapture)) != 'false';
+
+  Future<void> setCaptureProtection(bool enabled) =>
+      _storage.write(key: _kCapture, value: enabled ? 'true' : 'false');
 }

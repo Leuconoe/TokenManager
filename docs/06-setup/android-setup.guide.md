@@ -104,7 +104,7 @@ android {
 - `FLAG_SECURE`로 스크린샷·최근앱 미리보기 차단 (Design §7).
 
 ```kotlin
-package com.example.token_manager   // 실제 패키지명으로 교체
+package sw2.io.tokenmanager   // applicationId / namespace 와 동일
 
 import android.os.Bundle
 import android.view.WindowManager

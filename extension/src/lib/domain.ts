@@ -11,9 +11,15 @@ export interface TokenEntry {
   note: string;
   createdAt: number;
   updatedAt: number;
+  deletedAt?: number | null; // epoch ms tombstone; null/absent = live (sync)
 }
 
 export const SOON_DAYS = 14;
+
+/** Live (non-tombstoned) entries — what the UI and schedule should see. */
+export function activeEntries(entries: TokenEntry[]): TokenEntry[] {
+  return entries.filter((e) => e.deletedAt == null);
+}
 
 export function statusOf(
   e: TokenEntry,

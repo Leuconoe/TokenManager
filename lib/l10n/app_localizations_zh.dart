@@ -233,6 +233,18 @@ class AppLocalizationsZh extends AppLocalizations {
       '数据使用设备 Keystore 密钥加密。代码中不含密钥，因此无法通过反编译或复制到其他设备来恢复。在已 root 的设备上仅显示警告，不会阻止访问。';
 
   @override
+  String get captureProtectionTitle => '禁止截屏';
+
+  @override
+  String get captureProtectionSubtitle => '阻止截屏并在最近任务预览中隐藏内容（Android）';
+
+  @override
+  String get debugLogTitle => '调试日志';
+
+  @override
+  String get debugLogClear => '清除';
+
+  @override
   String get settingsCheckUpdate => '检查更新';
 
   @override
@@ -293,6 +305,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncNowAction => '立即同步';
 
   @override
+  String get syncInProgress => '正在同步…';
+
+  @override
+  String get syncIntervalTitle => '自动同步';
+
+  @override
+  String get syncIntervalSubtitle => '同步开启时按所选间隔自动同步';
+
+  @override
+  String get syncInterval5m => '每 5 分钟';
+
+  @override
+  String get syncInterval1h => '每小时';
+
+  @override
   String syncResultDone(int count) {
     return '已同步 $count 条';
   }
@@ -317,6 +344,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => '未连接';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Google Drive 登录失败。请检查 OAuth 设置（包名 + SHA-1）。';
+
+  @override
+  String get syncPassMismatchTitle => '同步口令不匹配';
+
+  @override
+  String get syncPassMismatchBody =>
+      '与云端已有数据的同步口令不一致。请输入在其他设备上使用的相同口令，或删除云端文件以重置同步。';
+
+  @override
+  String get syncPassReenter => '重新输入口令';
 
   @override
   String notifExpiredTitle(int count) {
@@ -601,6 +642,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '資料使用裝置 Keystore 金鑰加密。程式碼中不含金鑰，因此無法透過反編譯或複製到其他裝置還原。在已 root 的裝置上僅顯示警告，不會封鎖存取。';
 
   @override
+  String get captureProtectionTitle => '禁止螢幕截圖';
+
+  @override
+  String get captureProtectionSubtitle => '阻止螢幕截圖並在最近使用預覽中隱藏內容（Android）';
+
+  @override
+  String get debugLogTitle => '偵錯記錄';
+
+  @override
+  String get debugLogClear => '清除';
+
+  @override
   String get settingsCheckUpdate => '檢查更新';
 
   @override
@@ -661,6 +714,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get syncNowAction => '立即同步';
 
   @override
+  String get syncInProgress => '同步中…';
+
+  @override
+  String get syncIntervalTitle => '自動同步';
+
+  @override
+  String get syncIntervalSubtitle => '同步開啟時依所選間隔自動同步';
+
+  @override
+  String get syncInterval5m => '每 5 分鐘';
+
+  @override
+  String get syncInterval1h => '每小時';
+
+  @override
   String syncResultDone(int count) {
     return '已同步 $count 筆';
   }
@@ -685,6 +753,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get syncDriveNotConnected => '未連接';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Google Drive 登入失敗。請檢查 OAuth 設定（套件名稱 + SHA-1）。';
+
+  @override
+  String get syncPassMismatchTitle => '同步通關密語不一致';
+
+  @override
+  String get syncPassMismatchBody =>
+      '與雲端既有資料的同步通關密語不一致。請輸入在其他裝置上使用的相同通關密語，或刪除雲端檔案以重設同步。';
+
+  @override
+  String get syncPassReenter => '重新輸入通關密語';
 
   @override
   String notifExpiredTitle(int count) {

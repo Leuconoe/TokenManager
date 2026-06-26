@@ -30,6 +30,13 @@
     const days = Math.floor((e.expiresAt - now) / 86_400_000);
     return days < 0 ? t('expiredAt', { date: ymd }) : t('dday', { days, date: ymd });
   }
+
+  function openUrl(raw: string, ev: Event) {
+    ev.stopPropagation();
+    let u = raw.trim();
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    chrome.tabs.create({ url: u });
+  }
 </script>
 
 {#if entries.length === 0}
@@ -39,7 +46,16 @@
     <div class="card row" style="justify-content:space-between;cursor:pointer" onclick={() => onEdit(e)} role="button" tabindex="0" onkeydown={(ev) => ev.key === 'Enter' && onEdit(e)}>
       <div style="overflow:hidden">
         <div class="svc">{e.serviceName}</div>
-        {#if e.url}<div class="url">{e.url}</div>{/if}
+        {#if e.url}
+          <div class="url" style="display:flex;align-items:center;gap:4px">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.url}</span>
+            <button
+              onclick={(ev) => openUrl(e.url, ev)}
+              title={e.url}
+              style="flex:none;width:auto;padding:0 4px;background:none;border:none;color:var(--accent,#4f46e5);cursor:pointer;font-size:13px"
+            >↗</button>
+          </div>
+        {/if}
         <div class="sub">{subtitle(e)}</div>
       </div>
       <span class="badge {statusOf(e, now, leadDays)}">{t(STATUS_KEY[statusOf(e, now, leadDays)])}</span>

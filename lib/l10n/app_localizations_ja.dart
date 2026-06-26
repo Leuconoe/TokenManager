@@ -235,6 +235,19 @@ class AppLocalizationsJa extends AppLocalizations {
       'データは端末の Keystore 鍵で暗号化されます。コードに鍵がないため、逆コンパイルや他端末へのコピーでは復元できません。root 化端末では警告のみ表示し、ブロックはしません。';
 
   @override
+  String get captureProtectionTitle => 'スクリーンショットを禁止';
+
+  @override
+  String get captureProtectionSubtitle =>
+      'スクリーンショットを防ぎ、最近のアプリのプレビューで内容を隠します（Android）';
+
+  @override
+  String get debugLogTitle => 'デバッグログ';
+
+  @override
+  String get debugLogClear => 'クリア';
+
+  @override
   String get settingsCheckUpdate => 'アップデートを確認';
 
   @override
@@ -296,6 +309,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncNowAction => '今すぐ同期';
 
   @override
+  String get syncInProgress => '同期中…';
+
+  @override
+  String get syncIntervalTitle => '自動同期';
+
+  @override
+  String get syncIntervalSubtitle => '同期がオンの間、選択した間隔で自動同期';
+
+  @override
+  String get syncInterval5m => '5分ごと';
+
+  @override
+  String get syncInterval1h => '1時間ごと';
+
+  @override
   String syncResultDone(int count) {
     return '$count 件を同期しました';
   }
@@ -320,6 +348,20 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get syncDriveNotConnected => '未接続';
+
+  @override
+  String get syncDriveSignInFailed =>
+      'Google Drive ログインに失敗しました。OAuth 設定（パッケージ名 + SHA-1）を確認してください。';
+
+  @override
+  String get syncPassMismatchTitle => '同期パスフレーズ不一致';
+
+  @override
+  String get syncPassMismatchBody =>
+      'クラウド上の既存データと同期パスフレーズが一致しません。他の端末で使ったものと同じパスフレーズを入力するか、クラウドのファイルを削除して同期をリセットしてください。';
+
+  @override
+  String get syncPassReenter => 'パスフレーズを再入力';
 
   @override
   String notifExpiredTitle(int count) {
