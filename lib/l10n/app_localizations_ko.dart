@@ -207,13 +207,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get intervalOff => '끄기';
 
   @override
-  String get intervalWeekly => '주 1회 (기본)';
+  String get interval15Days => '15일마다';
 
   @override
-  String get intervalBiweekly => '2주 1회';
-
-  @override
-  String get intervalMonthly => '월 1회';
+  String get interval30Days => '30일마다 (기본)';
 
   @override
   String get securitySectionTitle => '보안';

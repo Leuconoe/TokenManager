@@ -479,23 +479,17 @@ abstract class AppLocalizations {
   /// **'끄기'**
   String get intervalOff;
 
-  /// No description provided for @intervalWeekly.
+  /// No description provided for @interval15Days.
   ///
   /// In ko, this message translates to:
-  /// **'주 1회 (기본)'**
-  String get intervalWeekly;
+  /// **'15일마다'**
+  String get interval15Days;
 
-  /// No description provided for @intervalBiweekly.
+  /// No description provided for @interval30Days.
   ///
   /// In ko, this message translates to:
-  /// **'2주 1회'**
-  String get intervalBiweekly;
-
-  /// No description provided for @intervalMonthly.
-  ///
-  /// In ko, this message translates to:
-  /// **'월 1회'**
-  String get intervalMonthly;
+  /// **'30일마다 (기본)'**
+  String get interval30Days;
 
   /// No description provided for @securitySectionTitle.
   ///

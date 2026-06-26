@@ -207,13 +207,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get intervalOff => 'オフ';
 
   @override
-  String get intervalWeekly => '週1回 (既定)';
+  String get interval15Days => '15日ごと';
 
   @override
-  String get intervalBiweekly => '2週間に1回';
-
-  @override
-  String get intervalMonthly => '月1回';
+  String get interval30Days => '30日ごと (既定)';
 
   @override
   String get securitySectionTitle => 'セキュリティ';

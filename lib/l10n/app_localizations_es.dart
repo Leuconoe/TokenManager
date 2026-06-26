@@ -213,13 +213,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get intervalOff => 'Desactivado';
 
   @override
-  String get intervalWeekly => 'Semanal (predet.)';
+  String get interval15Days => 'Cada 15 días';
 
   @override
-  String get intervalBiweekly => 'Cada 2 semanas';
-
-  @override
-  String get intervalMonthly => 'Mensual';
+  String get interval30Days => 'Cada 30 días (predet.)';
 
   @override
   String get securitySectionTitle => 'Seguridad';

@@ -5,9 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// Cadence for the "no expiry" security-warning notification.
 enum NoExpiryWarnInterval {
   off(0),
-  weekly(7),
-  biweekly(14),
-  monthly(30);
+  days15(15),
+  days30(30);
 
   final int days;
   const NoExpiryWarnInterval(this.days);
@@ -29,7 +28,7 @@ class SettingsRepository {
     final v = await _storage.read(key: _kInterval);
     return NoExpiryWarnInterval.values.firstWhere(
       (e) => e.name == v,
-      orElse: () => NoExpiryWarnInterval.weekly, // default
+      orElse: () => NoExpiryWarnInterval.days30, // default
     );
   }
 

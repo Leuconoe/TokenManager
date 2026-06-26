@@ -205,13 +205,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get intervalOff => '关闭';
 
   @override
-  String get intervalWeekly => '每周一次（默认）';
+  String get interval15Days => '每 15 天';
 
   @override
-  String get intervalBiweekly => '每两周一次';
-
-  @override
-  String get intervalMonthly => '每月一次';
+  String get interval30Days => '每 30 天（默认）';
 
   @override
   String get securitySectionTitle => '安全';
@@ -475,13 +472,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get intervalOff => '關閉';
 
   @override
-  String get intervalWeekly => '每週一次（預設）';
+  String get interval15Days => '每 15 天';
 
   @override
-  String get intervalBiweekly => '每兩週一次';
-
-  @override
-  String get intervalMonthly => '每月一次';
+  String get interval30Days => '每 30 天（預設）';
 
   @override
   String get securitySectionTitle => '安全';

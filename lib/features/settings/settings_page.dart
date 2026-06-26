@@ -90,9 +90,8 @@ class SettingsPage extends ConsumerWidget {
 
   String _label(AppLocalizations l, NoExpiryWarnInterval iv) => switch (iv) {
         NoExpiryWarnInterval.off => l.intervalOff,
-        NoExpiryWarnInterval.weekly => l.intervalWeekly,
-        NoExpiryWarnInterval.biweekly => l.intervalBiweekly,
-        NoExpiryWarnInterval.monthly => l.intervalMonthly,
+        NoExpiryWarnInterval.days15 => l.interval15Days,
+        NoExpiryWarnInterval.days30 => l.interval30Days,
       };
 
   String _localeLabel(AppLocalizations l, Locale? current) {
