@@ -32,7 +32,7 @@ API 키·토큰 탈취 공급망 공격이 늘어나는 가운데, 발급한 토
 
 ## 대상 플랫폼
 
-- **Android** (Flutter, minSdk 23) — `sw2.io.tokenmanager`
+- **Android** (Flutter, minSdk 23, **arm64-v8a** 전용) — `sw2.io.tokenmanager`
 - **Windows** (Flutter 데스크톱 — 트레이, 로그인 자동실행, Windows Hello)
 - **크롬 익스텐션** (`extension/` — Svelte + MV3)
 

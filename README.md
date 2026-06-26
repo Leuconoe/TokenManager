@@ -32,7 +32,7 @@ As token / API-key supply-chain attacks rise, the root problem is that issued to
 
 ## Targets
 
-- **Android** (Flutter, minSdk 23) — `sw2.io.tokenmanager`
+- **Android** (Flutter, minSdk 23, **arm64-v8a** only) — `sw2.io.tokenmanager`
 - **Windows** (Flutter desktop — tray, launch-at-login, Windows Hello)
 - **Chrome extension** (`extension/` — Svelte + MV3)
 

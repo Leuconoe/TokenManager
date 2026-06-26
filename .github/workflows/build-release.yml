@@ -76,12 +76,13 @@ jobs:
           printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=release.jks\n' \
             "$KS_PW" "$KEY_PW" "$KEY_ALIAS" > android/key.properties
           echo "Release signing configured."
-      - run: flutter build apk --release
+      # arm64-v8a only — keeps the APK ~25MB (vs a ~70MB universal/fat APK).
+      - run: flutter build apk --release --target-platform android-arm64
       - name: Stage APK
         run: |
           VER=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')
           mkdir -p out
-          cp build/app/outputs/flutter-apk/app-release.apk "out/TokenManager-${VER}-b${{ github.run_number }}.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "out/TokenManager-${VER}-b${{ github.run_number }}-arm64.apk"
       - uses: actions/upload-artifact@v4
         with: { name: android, path: out/* }
 
@@ -158,11 +159,8 @@ jobs:
         with:
           tag_name: ${{ needs.version.outputs.tag }}
           name: TokenManager ${{ needs.version.outputs.ver }}
-          generate_release_notes: true
-          body: |
-            ### TokenManager ${{ needs.version.outputs.ver }}
-            - **Version**: `${{ needs.version.outputs.ver }}` · **Commit**: ${{ github.sha }}
-            - 📱 Android APK · 🖥️ Windows x64 zip · 🧩 Chrome 익스텐션 zip
+          generate_release_notes: true   # auto commit-log appended after the curated notes
+          body_path: RELEASE_NOTES.md    # curated notes (edit per release)
           files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

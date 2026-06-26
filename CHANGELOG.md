@@ -25,6 +25,8 @@ First stable release.
   errors.
 - **Debug log** tab in Settings (app + extension) for troubleshooting.
 - Package id is now `sw2.io.tokenmanager`.
+- Android release APK is **arm64-v8a only** (~25 MB, down from a ~70 MB universal
+  APK). CI releases use a curated `RELEASE_NOTES.md` body.
 
 ## v0.1.1
 
