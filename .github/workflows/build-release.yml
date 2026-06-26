@@ -1,7 +1,7 @@
-name: Build & Release APK
+name: Build & Release
 
-# main 브랜치 push 시 자동으로 APK 빌드 → GitHub Release 생성/갱신.
-# 문서/마크다운만 바뀐 커밋은 빌드 생략.
+# main push 시 Android APK + Windows + 크롬 익스텐션을 병렬 빌드하고
+# 하나의 GitHub Release(build-<run>)에 모읍니다. 문서/마크다운만 바뀌면 생략.
 on:
   push:
     branches: [main]
@@ -11,7 +11,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write   # 릴리즈 생성 + 태그 push에 필요
+  contents: write
 
 concurrency:
   group: build-release
@@ -21,70 +21,98 @@ env:
   FLUTTER_VERSION: '3.44.2'
 
 jobs:
-  build:
+  # ---------------------------------------------------------------- Android
+  android:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # 릴리즈 노트 자동 생성(이전 태그 대비)용 전체 히스토리
-
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Flutter pub get
-        run: flutter pub get
-
-      - name: Codegen (drift)
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Analyze
-        run: flutter analyze
-
-      - name: Unit tests
-        run: flutter test
-
-      - name: Build release APK
-        run: flutter build apk --release
-
-      - name: Rename APK with build metadata
-        id: apk
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '${{ env.FLUTTER_VERSION }}', channel: stable, cache: true }
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - name: Stage APK
         run: |
           VER=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')
-          SHA_SHORT=$(git rev-parse --short HEAD)
-          NAME="tokenmanager-${VER}-b${{ github.run_number }}-${SHA_SHORT}.apk"
-          mkdir -p dist
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/${NAME}"
-          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
-          echo "version=${VER}" >> "$GITHUB_OUTPUT"
-          echo "sha_short=${SHA_SHORT}" >> "$GITHUB_OUTPUT"
+          mkdir -p out
+          cp build/app/outputs/flutter-apk/app-release.apk "out/TokenManager-${VER}-b${{ github.run_number }}.apk"
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: out/* }
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+  # ---------------------------------------------------------------- Windows
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: '${{ env.FLUTTER_VERSION }}', channel: stable, cache: true }
+      - name: Install OpenSSL (SQLCipher dependency)
+        run: choco install openssl --no-progress -y
+        shell: pwsh
+      - name: Set OPENSSL_ROOT_DIR
+        run: echo "OPENSSL_ROOT_DIR=C:\Program Files\OpenSSL-Win64" >> $env:GITHUB_ENV
+        shell: pwsh
+      - run: flutter config --enable-windows-desktop
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build windows --release
+      - name: Zip Windows build
+        shell: pwsh
+        run: |
+          $ver = (Select-String '^version:' pubspec.yaml).Line -replace 'version:\s*',''
+          New-Item -ItemType Directory -Force out | Out-Null
+          Compress-Archive -Path build/windows/x64/runner/Release/* `
+            -DestinationPath "out/TokenManager-$ver-b${{ github.run_number }}-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: out/* }
+
+  # -------------------------------------------------------------- Extension
+  extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Build extension
+        working-directory: extension
+        run: |
+          npm ci
+          npm run build
+      - name: Zip extension
+        run: |
+          VER=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')
+          mkdir -p out
+          (cd extension/dist && zip -r "$GITHUB_WORKSPACE/out/TokenManager-${VER}-b${{ github.run_number }}-extension.zip" .)
+      - uses: actions/upload-artifact@v4
+        with: { name: extension, path: out/* }
+
+  # ---------------------------------------------------------------- Release
+  release:
+    needs: [android, windows, extension]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 } # release-notes 자동 생성용
+      - uses: actions/download-artifact@v4
+        with: { path: artifacts }
+      - name: Resolve version
+        id: meta
+        run: echo "ver=$(grep '^version:' pubspec.yaml | sed 's/version:[[:space:]]*//')" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: TokenManager ${{ steps.apk.outputs.version }} (build ${{ github.run_number }})
-          generate_release_notes: true   # 이전 태그 이후 커밋 자동 정리
+          name: TokenManager ${{ steps.meta.outputs.ver }} (build ${{ github.run_number }})
+          generate_release_notes: true
           body: |
-            ### TokenManager 자동 빌드
-            - **Version**: `${{ steps.apk.outputs.version }}`
-            - **Build**: `#${{ github.run_number }}`
-            - **Commit**: ${{ github.sha }} (`${{ steps.apk.outputs.sha_short }}`)
-            - **APK**: `${{ steps.apk.outputs.name }}` (release, debug-key 서명)
+            ### TokenManager 자동 빌드 #${{ github.run_number }}
+            - **Version**: `${{ steps.meta.outputs.ver }}` · **Commit**: ${{ github.sha }}
+            - 📱 Android APK · 🖥️ Windows x64 zip · 🧩 Chrome 익스텐션 zip
 
-            > ⚠️ debug 키로 서명된 빌드입니다. 배포 전 release 키 서명 구성 필요.
-
-            ---
-          files: dist/${{ steps.apk.outputs.name }}
+            > ⚠️ Android/Windows는 debug 키 서명. 배포 전 release 키 구성 필요.
+          files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
