@@ -1,7 +1,7 @@
 {
   "name": "tokenmanager-extension",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.1",
   "type": "module",
   "description": "TokenManager browser extension — track token expiry, never store token values.",
   "scripts": {

@@ -55,3 +55,11 @@ dist/
 
 # Local launcher script (kept locally, never committed)
 run_emulator.bat
+
+# Android release signing — NEVER commit
+android/key.properties
+*.jks
+*.keystore
+
+# Local signing credentials note — NEVER commit
+signing-credentials.local.txt

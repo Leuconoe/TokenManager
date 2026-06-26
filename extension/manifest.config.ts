@@ -5,7 +5,7 @@ import { defineManifest } from '@crxjs/vite-plugin';
 export default defineManifest({
   manifest_version: 3,
   name: 'TokenManager',
-  version: '0.0.1',
+  version: '0.1.1',
   description:
     'Offline token-metadata vault — track token expiry, never store token values.',
   action: {
