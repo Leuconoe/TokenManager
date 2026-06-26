@@ -274,6 +274,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mergeUseImported => '가져온 값';
 
   @override
+  String get syncSectionTitle => '폴더 동기화';
+
+  @override
+  String get syncEnableSubtitle =>
+      '지정한 폴더에 암호화 파일로 동기화 (Drive/OneDrive 등 동기화 폴더 권장)';
+
+  @override
+  String get syncFolderTitle => '동기화 폴더';
+
+  @override
+  String get syncPassphraseTitle => '동기화 패스프레이즈';
+
+  @override
+  String get syncValueNotSet => '미설정';
+
+  @override
+  String get syncValueSet => '설정됨';
+
+  @override
+  String get syncNowAction => '지금 동기화';
+
+  @override
+  String syncResultDone(int count) {
+    return '$count건 동기화됨';
+  }
+
+  @override
+  String get syncResultFailed => '동기화 실패 — 패스프레이즈/폴더를 확인하세요';
+
+  @override
+  String get syncNeedSetup => '폴더와 패스프레이즈를 먼저 설정하세요';
+
+  @override
+  String get passphraseMin8 => '8자 이상';
+
+  @override
   String notifExpiredTitle(int count) {
     return '만료된 토큰 $count건';
   }

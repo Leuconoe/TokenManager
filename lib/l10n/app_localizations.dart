@@ -599,6 +599,72 @@ abstract class AppLocalizations {
   /// **'가져온 값'**
   String get mergeUseImported;
 
+  /// No description provided for @syncSectionTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더 동기화'**
+  String get syncSectionTitle;
+
+  /// No description provided for @syncEnableSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'지정한 폴더에 암호화 파일로 동기화 (Drive/OneDrive 등 동기화 폴더 권장)'**
+  String get syncEnableSubtitle;
+
+  /// No description provided for @syncFolderTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화 폴더'**
+  String get syncFolderTitle;
+
+  /// No description provided for @syncPassphraseTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화 패스프레이즈'**
+  String get syncPassphraseTitle;
+
+  /// No description provided for @syncValueNotSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'미설정'**
+  String get syncValueNotSet;
+
+  /// No description provided for @syncValueSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정됨'**
+  String get syncValueSet;
+
+  /// No description provided for @syncNowAction.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 동기화'**
+  String get syncNowAction;
+
+  /// No description provided for @syncResultDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}건 동기화됨'**
+  String syncResultDone(int count);
+
+  /// No description provided for @syncResultFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'동기화 실패 — 패스프레이즈/폴더를 확인하세요'**
+  String get syncResultFailed;
+
+  /// No description provided for @syncNeedSetup.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더와 패스프레이즈를 먼저 설정하세요'**
+  String get syncNeedSetup;
+
+  /// No description provided for @passphraseMin8.
+  ///
+  /// In ko, this message translates to:
+  /// **'8자 이상'**
+  String get passphraseMin8;
+
   /// No description provided for @notifExpiredTitle.
   ///
   /// In ko, this message translates to:

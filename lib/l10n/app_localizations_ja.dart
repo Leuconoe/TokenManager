@@ -274,6 +274,42 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mergeUseImported => '取り込んだ値';
 
   @override
+  String get syncSectionTitle => 'フォルダ同期';
+
+  @override
+  String get syncEnableSubtitle =>
+      '指定フォルダに暗号化ファイルで同期（Drive/OneDrive 等の同期フォルダ推奨）';
+
+  @override
+  String get syncFolderTitle => '同期フォルダ';
+
+  @override
+  String get syncPassphraseTitle => '同期パスフレーズ';
+
+  @override
+  String get syncValueNotSet => '未設定';
+
+  @override
+  String get syncValueSet => '設定済み';
+
+  @override
+  String get syncNowAction => '今すぐ同期';
+
+  @override
+  String syncResultDone(int count) {
+    return '$count 件を同期しました';
+  }
+
+  @override
+  String get syncResultFailed => '同期失敗 — パスフレーズ/フォルダを確認';
+
+  @override
+  String get syncNeedSetup => '先にフォルダとパスフレーズを設定してください';
+
+  @override
+  String get passphraseMin8 => '8文字以上';
+
+  @override
   String notifExpiredTitle(int count) {
     return '期限切れトークン $count 件';
   }

@@ -1,5 +1,7 @@
 // Design Ref: §10.4 — Riverpod state for the token list (sort + status filter).
 
+import 'dart:async' show unawaited;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/token_entry.dart';
@@ -61,10 +63,12 @@ class TokenListNotifier extends AsyncNotifier<TokenListState> {
   Future<void> save(TokenEntry entry) async {
     await ref.read(tokenRepositoryProvider).upsert(entry);
     await _refresh();
+    unawaited(ref.read(syncControllerProvider).syncQuietly()); // best-effort push
   }
 
   Future<void> remove(String id) async {
     await ref.read(tokenRepositoryProvider).delete(id);
     await _refresh();
+    unawaited(ref.read(syncControllerProvider).syncQuietly());
   }
 }

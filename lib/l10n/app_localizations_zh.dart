@@ -272,6 +272,41 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mergeUseImported => '使用导入';
 
   @override
+  String get syncSectionTitle => '文件夹同步';
+
+  @override
+  String get syncEnableSubtitle => '以加密文件同步到指定文件夹（建议用 Drive/OneDrive 等同步文件夹）';
+
+  @override
+  String get syncFolderTitle => '同步文件夹';
+
+  @override
+  String get syncPassphraseTitle => '同步口令';
+
+  @override
+  String get syncValueNotSet => '未设置';
+
+  @override
+  String get syncValueSet => '已设置';
+
+  @override
+  String get syncNowAction => '立即同步';
+
+  @override
+  String syncResultDone(int count) {
+    return '已同步 $count 条';
+  }
+
+  @override
+  String get syncResultFailed => '同步失败 — 请检查口令/文件夹';
+
+  @override
+  String get syncNeedSetup => '请先设置文件夹和口令';
+
+  @override
+  String get passphraseMin8 => '至少 8 位';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count 个已过期令牌';
   }
@@ -591,6 +626,41 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get mergeUseImported => '使用匯入';
+
+  @override
+  String get syncSectionTitle => '資料夾同步';
+
+  @override
+  String get syncEnableSubtitle => '以加密檔案同步到指定資料夾（建議用 Drive/OneDrive 等同步資料夾）';
+
+  @override
+  String get syncFolderTitle => '同步資料夾';
+
+  @override
+  String get syncPassphraseTitle => '同步通關密語';
+
+  @override
+  String get syncValueNotSet => '未設定';
+
+  @override
+  String get syncValueSet => '已設定';
+
+  @override
+  String get syncNowAction => '立即同步';
+
+  @override
+  String syncResultDone(int count) {
+    return '已同步 $count 筆';
+  }
+
+  @override
+  String get syncResultFailed => '同步失敗 — 請檢查通關密語/資料夾';
+
+  @override
+  String get syncNeedSetup => '請先設定資料夾與通關密語';
+
+  @override
+  String get passphraseMin8 => '至少 8 個字元';
 
   @override
   String notifExpiredTitle(int count) {

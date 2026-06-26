@@ -284,6 +284,43 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mergeUseImported => 'Utiliser importée';
 
   @override
+  String get syncSectionTitle => 'Synchronisation par dossier';
+
+  @override
+  String get syncEnableSubtitle =>
+      'Synchronise via un fichier chiffré dans un dossier (idéalement un dossier Drive/OneDrive)';
+
+  @override
+  String get syncFolderTitle => 'Dossier de synchronisation';
+
+  @override
+  String get syncPassphraseTitle => 'Phrase de synchronisation';
+
+  @override
+  String get syncValueNotSet => 'Non défini';
+
+  @override
+  String get syncValueSet => 'Défini';
+
+  @override
+  String get syncNowAction => 'Synchroniser maintenant';
+
+  @override
+  String syncResultDone(int count) {
+    return '$count élément(s) synchronisé(s)';
+  }
+
+  @override
+  String get syncResultFailed =>
+      'Échec de synchro — vérifiez la phrase/le dossier';
+
+  @override
+  String get syncNeedSetup => 'Configurez d\'abord le dossier et la phrase';
+
+  @override
+  String get passphraseMin8 => '8 caractères min.';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count jeton(s) expiré(s)';
   }

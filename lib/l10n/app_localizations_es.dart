@@ -282,6 +282,43 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mergeUseImported => 'Usar importada';
 
   @override
+  String get syncSectionTitle => 'Sincronización por carpeta';
+
+  @override
+  String get syncEnableSubtitle =>
+      'Sincroniza como archivo cifrado en una carpeta (ideal una carpeta de Drive/OneDrive)';
+
+  @override
+  String get syncFolderTitle => 'Carpeta de sincronización';
+
+  @override
+  String get syncPassphraseTitle => 'Frase de sincronización';
+
+  @override
+  String get syncValueNotSet => 'Sin definir';
+
+  @override
+  String get syncValueSet => 'Definida';
+
+  @override
+  String get syncNowAction => 'Sincronizar ahora';
+
+  @override
+  String syncResultDone(int count) {
+    return '$count elemento(s) sincronizado(s)';
+  }
+
+  @override
+  String get syncResultFailed =>
+      'Error de sincronización — revisa frase/carpeta';
+
+  @override
+  String get syncNeedSetup => 'Configura primero la carpeta y la frase';
+
+  @override
+  String get passphraseMin8 => 'mín. 8 caracteres';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count token(s) caducado(s)';
   }

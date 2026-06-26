@@ -51,6 +51,9 @@ Future<void> main() async {
   // Load the saved language (null = follow system, English fallback).
   await container.read(localeControllerProvider.notifier).load();
 
+  // Folder sync: pull + merge on launch (no-op if disabled/not configured).
+  await container.read(syncControllerProvider).syncQuietly();
+
   // Skip the lock gate on devices with no secure lock screen (no biometric
   // and no device credential) — otherwise the user would be stuck. Data
   // remains encrypted at rest regardless.

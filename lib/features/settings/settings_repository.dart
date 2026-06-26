@@ -27,6 +27,10 @@ class SettingsRepository {
   static const _kExpiryLead = 'tm_expiry_lead_v1'; // days before expiry to warn
   static const _kLocale = 'tm_locale_tag_v1'; // BCP47 tag, or absent = system
   static const _kAutoStart = 'tm_autostart_v1'; // desktop launch-at-login
+  static const _kSyncEnabled = 'tm_sync_enabled_v1';
+  static const _kSyncFolder = 'tm_sync_folder_v1';
+  static const _kSyncPass = 'tm_sync_pass_v1';
+  static const _kSyncLast = 'tm_sync_last_v1';
   final FlutterSecureStorage _storage;
 
   SettingsRepository([FlutterSecureStorage? storage])
@@ -76,4 +80,37 @@ class SettingsRepository {
 
   Future<void> setAutoStart(bool enabled) =>
       _storage.write(key: _kAutoStart, value: enabled ? 'true' : 'false');
+
+  // --- Folder sync ---
+  Future<bool> getSyncEnabled() async =>
+      (await _storage.read(key: _kSyncEnabled)) == 'true';
+  Future<void> setSyncEnabled(bool v) =>
+      _storage.write(key: _kSyncEnabled, value: v ? 'true' : 'false');
+
+  Future<String?> getSyncFolder() => _storage.read(key: _kSyncFolder);
+  Future<void> setSyncFolder(String? path) async {
+    if (path == null) {
+      await _storage.delete(key: _kSyncFolder);
+    } else {
+      await _storage.write(key: _kSyncFolder, value: path);
+    }
+  }
+
+  Future<String?> getSyncPassphrase() => _storage.read(key: _kSyncPass);
+  Future<void> setSyncPassphrase(String? p) async {
+    if (p == null) {
+      await _storage.delete(key: _kSyncPass);
+    } else {
+      await _storage.write(key: _kSyncPass, value: p);
+    }
+  }
+
+  Future<DateTime?> getSyncLast() async {
+    final v = await _storage.read(key: _kSyncLast);
+    final ms = v == null ? null : int.tryParse(v);
+    return ms == null ? null : DateTime.fromMillisecondsSinceEpoch(ms);
+  }
+
+  Future<void> setSyncLast(DateTime t) =>
+      _storage.write(key: _kSyncLast, value: t.millisecondsSinceEpoch.toString());
 }

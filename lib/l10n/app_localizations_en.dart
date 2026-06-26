@@ -281,6 +281,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeUseImported => 'Use imported';
 
   @override
+  String get syncSectionTitle => 'Folder sync';
+
+  @override
+  String get syncEnableSubtitle =>
+      'Sync as an encrypted file in a chosen folder (a Drive/OneDrive synced folder is ideal)';
+
+  @override
+  String get syncFolderTitle => 'Sync folder';
+
+  @override
+  String get syncPassphraseTitle => 'Sync passphrase';
+
+  @override
+  String get syncValueNotSet => 'Not set';
+
+  @override
+  String get syncValueSet => 'Set';
+
+  @override
+  String get syncNowAction => 'Sync now';
+
+  @override
+  String syncResultDone(int count) {
+    return 'Synced $count item(s)';
+  }
+
+  @override
+  String get syncResultFailed => 'Sync failed — check passphrase/folder';
+
+  @override
+  String get syncNeedSetup => 'Set the folder and passphrase first';
+
+  @override
+  String get passphraseMin8 => '8+ characters';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count expired token(s)';
   }

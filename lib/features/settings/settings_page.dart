@@ -2,6 +2,7 @@
 
 import 'dart:io' show Platform;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +12,14 @@ import '../../l10n/app_localizations.dart';
 import '../tokens/token_providers.dart';
 import 'locale_controller.dart';
 import 'settings_repository.dart';
+
+final _syncEnabledProvider = FutureProvider<bool>(
+    (ref) => ref.watch(settingsRepositoryProvider).getSyncEnabled());
+final _syncFolderProvider = FutureProvider<String?>(
+    (ref) => ref.watch(settingsRepositoryProvider).getSyncFolder());
+final _syncPassSetProvider = FutureProvider<bool>((ref) async =>
+    ((await ref.watch(settingsRepositoryProvider).getSyncPassphrase()) ?? '')
+        .isNotEmpty);
 
 final _intervalProvider = FutureProvider<NoExpiryWarnInterval>((ref) =>
     ref.watch(settingsRepositoryProvider).getNoExpiryInterval());
@@ -102,6 +111,50 @@ class SettingsPage extends ConsumerWidget {
                     .toList(),
               ),
             ),
+            if (_isDesktop) ...[
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.sync),
+                title: Text(l.syncSectionTitle),
+                subtitle: Text(l.syncEnableSubtitle),
+                isThreeLine: true,
+                trailing: Switch(
+                  value: ref.watch(_syncEnabledProvider).valueOrNull ?? false,
+                  onChanged: (v) async {
+                    await ref.read(settingsRepositoryProvider).setSyncEnabled(v);
+                    ref.invalidate(_syncEnabledProvider);
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(l.syncFolderTitle),
+                subtitle: Text(ref.watch(_syncFolderProvider).valueOrNull ??
+                    l.syncValueNotSet),
+                trailing: const Icon(Icons.folder_open),
+                onTap: () async {
+                  final dir = await FilePicker.getDirectoryPath();
+                  if (dir != null) {
+                    await ref.read(settingsRepositoryProvider).setSyncFolder(dir);
+                    ref.invalidate(_syncFolderProvider);
+                  }
+                },
+              ),
+              ListTile(
+                title: Text(l.syncPassphraseTitle),
+                subtitle: Text(
+                    (ref.watch(_syncPassSetProvider).valueOrNull ?? false)
+                        ? l.syncValueSet
+                        : l.syncValueNotSet),
+                trailing: const Icon(Icons.key_outlined),
+                onTap: () => _setSyncPass(context, ref, l),
+              ),
+              ListTile(
+                leading: const Icon(Icons.sync_alt),
+                title: Text(l.syncNowAction),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _runSync(context, ref, l),
+              ),
+            ],
             const Divider(),
             ListTile(
               leading: const Icon(Icons.system_update_outlined),
@@ -133,6 +186,57 @@ class SettingsPage extends ConsumerWidget {
         ExpiryLeadInterval.days14 => l.lead14Days,
         ExpiryLeadInterval.days30 => l.lead30Days,
       };
+
+  Future<void> _setSyncPass(
+      BuildContext context, WidgetRef ref, AppLocalizations l) async {
+    final ctrl = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.syncPassphraseTitle),
+        content: TextField(
+          controller: ctrl,
+          obscureText: true,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: l.syncPassphraseTitle,
+            helperText: l.passphraseMin8,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.actionCancel)),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l.actionSave)),
+        ],
+      ),
+    );
+    if (ok == true && ctrl.text.length >= 8) {
+      await ref.read(settingsRepositoryProvider).setSyncPassphrase(ctrl.text);
+      ref.invalidate(_syncPassSetProvider);
+    }
+  }
+
+  Future<void> _runSync(
+      BuildContext context, WidgetRef ref, AppLocalizations l) async {
+    final m = ScaffoldMessenger.of(context);
+    try {
+      final n = await ref.read(syncControllerProvider).syncNow();
+      if (!context.mounted) return;
+      if (n == null) {
+        m.showSnackBar(SnackBar(content: Text(l.syncNeedSetup)));
+        return;
+      }
+      ref.invalidate(tokenListProvider); // reflect merged result
+      m.showSnackBar(SnackBar(content: Text(l.syncResultDone(n))));
+    } catch (_) {
+      if (!context.mounted) return;
+      m.showSnackBar(SnackBar(content: Text(l.syncResultFailed)));
+    }
+  }
 
   Future<void> _checkUpdate(
       BuildContext context, WidgetRef ref, AppLocalizations l) async {
