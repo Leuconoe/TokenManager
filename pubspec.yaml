@@ -50,6 +50,10 @@ dependencies:
   # Open the GitHub release page on update-available.
   url_launcher: ^6.3.0
 
+  # Android Storage Access Framework (sync into a cloud-synced folder).
+  saf_util: ^3.1.0
+  saf_stream: ^3.0.0
+
   # Desktop (Windows) runtime: tray-resident + launch at login.
   # No Android impl — unused there, guarded by Platform checks.
   window_manager: ^0.4.3

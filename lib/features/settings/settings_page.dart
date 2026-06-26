@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saf_util/saf_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/providers.dart';
@@ -32,6 +33,9 @@ final _autoStartProvider = FutureProvider<bool>(
 
 bool get _isDesktop =>
     Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
+// Folder sync supported on desktop (filesystem) and Android (SAF tree).
+bool get _syncSupported => _isDesktop || Platform.isAndroid;
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -111,7 +115,7 @@ class SettingsPage extends ConsumerWidget {
                     .toList(),
               ),
             ),
-            if (_isDesktop) ...[
+            if (_syncSupported) ...[
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.sync),
@@ -132,9 +136,17 @@ class SettingsPage extends ConsumerWidget {
                     l.syncValueNotSet),
                 trailing: const Icon(Icons.folder_open),
                 onTap: () async {
-                  final dir = await FilePicker.getDirectoryPath();
-                  if (dir != null) {
-                    await ref.read(settingsRepositoryProvider).setSyncFolder(dir);
+                  // Android: SAF document tree (persisted). Desktop: a path.
+                  final String? loc;
+                  if (Platform.isAndroid) {
+                    final d = await SafUtil().pickDirectory(
+                        writePermission: true, persistablePermission: true);
+                    loc = d?.uri;
+                  } else {
+                    loc = await FilePicker.getDirectoryPath();
+                  }
+                  if (loc != null) {
+                    await ref.read(settingsRepositoryProvider).setSyncFolder(loc);
                     ref.invalidate(_syncFolderProvider);
                   }
                 },

@@ -1,11 +1,15 @@
 // Wires settings → FolderSyncStorage → SyncService. Reads the sync config
 // (enabled / folder / passphrase) each run so changes take effect immediately.
 
+import 'dart:io' show Platform;
+
 import '../domain/crypto_port.dart';
 import '../../features/settings/settings_repository.dart';
 import '../../features/tokens/data/token_repository.dart';
 import 'folder_sync_storage.dart';
+import 'saf_sync_storage.dart';
 import 'sync_service.dart';
+import 'sync_storage.dart';
 
 class SyncController {
   final TokenRepository repo;
@@ -22,7 +26,10 @@ class SyncController {
     final pass = await settings.getSyncPassphrase();
     if (folder == null || pass == null || pass.isEmpty) return null;
 
-    final svc = SyncService(repo, crypto, FolderSyncStorage(folder));
+    // Android stores a SAF tree URI; desktop stores a filesystem path.
+    final SyncStorage storage =
+        Platform.isAndroid ? SafSyncStorage(folder) : FolderSyncStorage(folder);
+    final svc = SyncService(repo, crypto, storage);
     final r = await svc.syncNow(pass);
     await settings.setSyncLast(DateTime.now());
     return r.merged;
