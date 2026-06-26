@@ -275,4 +275,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get languageSystemDefault => 'Predeterminado del sistema';
+
+  @override
+  String get settingsAutoStart => 'Iniciar al iniciar sesión';
+
+  @override
+  String get settingsAutoStartSubtitle =>
+      'Arranca en la bandeja al iniciar sesión en Windows';
 }

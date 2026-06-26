@@ -9,6 +9,7 @@ import 'db/app_database.dart';
 import 'domain/crypto_port.dart';
 import 'notification/scheduler.dart';
 import 'scan/android_scheduler.dart';
+import 'scan/autostart_service.dart';
 import 'scan/desktop_scheduler.dart';
 import 'scan/scan_scheduler.dart';
 import 'scan/scan_service.dart';
@@ -58,6 +59,10 @@ final scanServiceProvider = Provider<ScanService>(
   ),
 );
 
+final autoStartServiceProvider = Provider<AutoStartService>(
+  (ref) => AutoStartService(),
+);
+
 /// Platform-branched scan scheduler: Android=WorkManager, Desktop=tray+startup.
 final scanSchedulerProvider = Provider<ScanScheduler>((ref) {
   if (Platform.isAndroid) {
@@ -66,7 +71,11 @@ final scanSchedulerProvider = Provider<ScanScheduler>((ref) {
       ref.watch(notificationSchedulerProvider),
     );
   }
-  return DesktopTrayScheduler(ref.watch(scanServiceProvider));
+  return DesktopTrayScheduler(
+    ref.watch(scanServiceProvider),
+    ref.watch(settingsRepositoryProvider),
+    ref.watch(autoStartServiceProvider),
+  );
 });
 
 /// Whether the vault is currently unlocked (gated by biometric auth).

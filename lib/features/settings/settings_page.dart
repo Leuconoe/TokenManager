@@ -1,5 +1,7 @@
 // Design Ref: §5.3 SettingsPage — no-expiry warning cadence + security info.
 
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +12,12 @@ import 'settings_repository.dart';
 
 final _intervalProvider = FutureProvider<NoExpiryWarnInterval>((ref) =>
     ref.watch(settingsRepositoryProvider).getNoExpiryInterval());
+
+final _autoStartProvider = FutureProvider<bool>(
+    (ref) => ref.watch(settingsRepositoryProvider).getAutoStart());
+
+bool get _isDesktop =>
+    Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -32,6 +40,19 @@ class SettingsPage extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _pickLanguage(context, ref, l),
             ),
+            if (_isDesktop)
+              SwitchListTile(
+                secondary: const Icon(Icons.power_settings_new),
+                title: Text(l.settingsAutoStart),
+                subtitle: Text(l.settingsAutoStartSubtitle),
+                value: ref.watch(_autoStartProvider).valueOrNull ?? true,
+                onChanged: (v) async {
+                  await ref.read(settingsRepositoryProvider).setAutoStart(v);
+                  final svc = ref.read(autoStartServiceProvider);
+                  v ? await svc.enable() : await svc.disable();
+                  ref.invalidate(_autoStartProvider);
+                },
+              ),
             const Divider(),
             ListTile(
               title: Text(l.noExpiryWarnTitle),

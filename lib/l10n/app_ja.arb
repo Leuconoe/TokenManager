@@ -77,5 +77,7 @@
   "restoreAuthError": "パスフレーズが正しくないか、バックアップが破損しています",
   "restoreFormatError": "サポートされていないバックアップファイルです",
   "settingsLanguage": "言語",
-  "languageSystemDefault": "システムの既定"
+  "languageSystemDefault": "システムの既定",
+  "settingsAutoStart": "ログイン時に自動起動",
+  "settingsAutoStartSubtitle": "Windows サインイン時にトレイへ自動起動"
 }

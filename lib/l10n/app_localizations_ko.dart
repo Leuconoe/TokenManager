@@ -268,4 +268,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get languageSystemDefault => '시스템 기본';
+
+  @override
+  String get settingsAutoStart => '로그인 시 자동 실행';
+
+  @override
+  String get settingsAutoStartSubtitle => 'Windows 로그인 시 트레이로 자동 시작';
 }

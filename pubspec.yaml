@@ -79,6 +79,10 @@ flutter_launcher_icons:
   adaptive_icon_background: "#3F51B5"
   adaptive_icon_foreground: "assets/icon/foreground.png"
   remove_alpha_ios: true
+  windows:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    icon_size: 256
 
 # NOTE: Drift uses code generation. After `flutter pub get`, run:
 #   dart run build_runner build --delete-conflicting-outputs

@@ -77,5 +77,7 @@
   "restoreAuthError": "口令不正确或备份已损坏",
   "restoreFormatError": "不支持的备份文件",
   "settingsLanguage": "语言",
-  "languageSystemDefault": "系统默认"
+  "languageSystemDefault": "系统默认",
+  "settingsAutoStart": "登录时自动启动",
+  "settingsAutoStartSubtitle": "Windows 登录时自动启动到系统托盘"
 }

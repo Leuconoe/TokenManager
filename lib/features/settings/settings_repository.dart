@@ -16,6 +16,7 @@ enum NoExpiryWarnInterval {
 class SettingsRepository {
   static const _kInterval = 'tm_noexpiry_interval_v1';
   static const _kLocale = 'tm_locale_tag_v1'; // BCP47 tag, or absent = system
+  static const _kAutoStart = 'tm_autostart_v1'; // desktop launch-at-login
   final FlutterSecureStorage _storage;
 
   SettingsRepository([FlutterSecureStorage? storage])
@@ -47,4 +48,11 @@ class SettingsRepository {
       await _storage.write(key: _kLocale, value: tag);
     }
   }
+
+  /// Desktop launch-at-login preference (default: enabled).
+  Future<bool> getAutoStart() async =>
+      (await _storage.read(key: _kAutoStart)) != 'false';
+
+  Future<void> setAutoStart(bool enabled) =>
+      _storage.write(key: _kAutoStart, value: enabled ? 'true' : 'false');
 }

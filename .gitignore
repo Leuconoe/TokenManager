@@ -49,3 +49,6 @@ android/build/
 
 # bkit tooling state (session-changing, not source)
 .bkit/
+
+# Local release artifacts
+dist/

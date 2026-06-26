@@ -2,14 +2,13 @@
 // resident + periodic Timer. Closing the window hides to tray instead of exiting.
 
 import 'dart:async';
-import 'dart:io' show Platform;
 
-import 'package:launch_at_startup/launch_at_startup.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../features/settings/settings_repository.dart';
 import '../domain/token_status.dart';
+import 'autostart_service.dart';
 import 'scan_scheduler.dart';
 import 'scan_service.dart';
 
@@ -17,20 +16,20 @@ class DesktopTrayScheduler
     with TrayListener, WindowListener
     implements ScanScheduler {
   final ScanService _scan;
+  final SettingsRepository _settings;
+  final AutoStartService _autoStart;
   Timer? _timer;
 
-  DesktopTrayScheduler(this._scan);
+  DesktopTrayScheduler(this._scan, this._settings, this._autoStart);
 
   @override
   Future<void> ensureScheduled() async {
-    // 1) Launch at login (minimized arg reserved for future start-hidden).
-    final info = await PackageInfo.fromPlatform();
-    launchAtStartup.setup(
-      appName: info.appName,
-      appPath: Platform.resolvedExecutable,
-      args: ['--minimized'],
-    );
-    await launchAtStartup.enable();
+    // 1) Launch at login — honor the saved Settings preference (default on).
+    if (await _settings.getAutoStart()) {
+      await _autoStart.enable();
+    } else {
+      await _autoStart.disable();
+    }
 
     // 2) System tray.
     trayManager.addListener(this);

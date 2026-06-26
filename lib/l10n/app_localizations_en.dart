@@ -273,4 +273,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSystemDefault => 'System default';
+
+  @override
+  String get settingsAutoStart => 'Launch at login';
+
+  @override
+  String get settingsAutoStartSubtitle =>
+      'Start to the system tray when Windows signs in';
 }

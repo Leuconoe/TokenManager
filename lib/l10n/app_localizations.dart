@@ -574,6 +574,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'시스템 기본'**
   String get languageSystemDefault;
+
+  /// No description provided for @settingsAutoStart.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인 시 자동 실행'**
+  String get settingsAutoStart;
+
+  /// No description provided for @settingsAutoStartSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 로그인 시 트레이로 자동 시작'**
+  String get settingsAutoStartSubtitle;
 }
 
 class _AppLocalizationsDelegate

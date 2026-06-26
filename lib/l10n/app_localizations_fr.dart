@@ -277,4 +277,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get languageSystemDefault => 'Par défaut du système';
+
+  @override
+  String get settingsAutoStart => 'Lancer à l\'ouverture de session';
+
+  @override
+  String get settingsAutoStartSubtitle =>
+      'Démarre dans la barre d\'état lors de la connexion Windows';
 }

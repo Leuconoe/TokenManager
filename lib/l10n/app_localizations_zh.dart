@@ -266,6 +266,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageSystemDefault => '系统默认';
+
+  @override
+  String get settingsAutoStart => '登录时自动启动';
+
+  @override
+  String get settingsAutoStartSubtitle => 'Windows 登录时自动启动到系统托盘';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -530,4 +536,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get languageSystemDefault => '系統預設';
+
+  @override
+  String get settingsAutoStart => '登入時自動啟動';
+
+  @override
+  String get settingsAutoStartSubtitle => 'Windows 登入時自動啟動至系統匣';
 }

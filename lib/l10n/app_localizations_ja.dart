@@ -268,4 +268,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get languageSystemDefault => 'システムの既定';
+
+  @override
+  String get settingsAutoStart => 'ログイン時に自動起動';
+
+  @override
+  String get settingsAutoStartSubtitle => 'Windows サインイン時にトレイへ自動起動';
 }

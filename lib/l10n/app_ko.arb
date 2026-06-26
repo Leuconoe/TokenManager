@@ -162,5 +162,9 @@
   "settingsLanguage": "언어",
   "@settingsLanguage": {},
   "languageSystemDefault": "시스템 기본",
-  "@languageSystemDefault": {}
+  "@languageSystemDefault": {},
+  "settingsAutoStart": "로그인 시 자동 실행",
+  "@settingsAutoStart": {},
+  "settingsAutoStartSubtitle": "Windows 로그인 시 트레이로 자동 시작",
+  "@settingsAutoStartSubtitle": {}
 }
