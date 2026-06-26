@@ -46,3 +46,6 @@ app.*.map.json
 
 # Nested Gradle build output (not covered by root /build/)
 android/build/
+
+# bkit tooling state (session-changing, not source)
+.bkit/
