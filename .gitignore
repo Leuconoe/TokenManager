@@ -52,3 +52,6 @@ android/build/
 
 # Local release artifacts
 dist/
+
+# Local launcher script (kept locally, never committed)
+run_emulator.bat
