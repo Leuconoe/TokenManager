@@ -12,9 +12,13 @@ export default defineManifest({
     default_popup: 'index.html',
     default_title: 'TokenManager',
   },
-  // activeTab: 아이콘 클릭(팝업 열기) 시에만 현재 탭 URL/제목 접근.
-  // 광범위 host 권한·경고 없음. 추가 화면 자동 채우기에만 사용.
-  permissions: ['storage', 'activeTab'],
+  // activeTab: 아이콘 클릭 시에만 현재 탭 URL/제목 접근(자동 채우기).
+  // alarms+notifications: 백그라운드 주기 만료 알림(평문 스케줄만 읽음).
+  permissions: ['storage', 'activeTab', 'alarms', 'notifications'],
+  background: {
+    service_worker: 'src/background.ts',
+    type: 'module',
+  },
   content_security_policy: {
     extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
   },
