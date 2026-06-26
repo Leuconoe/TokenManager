@@ -9,12 +9,22 @@ import '../../../core/domain/token_status.dart';
 enum TokenSort { expirySoonest, serviceName, recentlyUpdated }
 
 abstract interface class TokenRepository {
+  /// Active (non-deleted) entries.
   Future<List<TokenEntry>> list({TokenSort sort});
+
+  /// ALL rows including tombstones (deletedAt != null) — for sync/backup.
+  Future<List<TokenEntry>> listAll();
+
   Future<TokenEntry?> getById(String id);
   Future<void> upsert(TokenEntry entry);
+
+  /// Soft delete (tombstone) so the deletion can be synced.
   Future<void> delete(String id);
 
-  /// Groups all entries by derived status (for notifications).
+  /// Hard-wipe every row (used by overwrite-restore). Bypasses tombstones.
+  Future<void> clearAll();
+
+  /// Groups active entries by derived status (for notifications).
   Future<Map<TokenStatus, List<TokenEntry>>> scanStatus({
     DateTime? now,
     int soonDays,
@@ -27,10 +37,18 @@ class DriftTokenRepository implements TokenRepository {
 
   @override
   Future<List<TokenEntry>> list({TokenSort sort = TokenSort.expirySoonest}) async {
-    final rows = await _db.select(_db.tokenEntries).get();
+    final rows = await (_db.select(_db.tokenEntries)
+          ..where((t) => t.deletedAt.isNull()))
+        .get();
     final entries = rows.map(_toEntry).toList();
     _applySort(entries, sort);
     return entries;
+  }
+
+  @override
+  Future<List<TokenEntry>> listAll() async {
+    final rows = await _db.select(_db.tokenEntries).get();
+    return rows.map(_toEntry).toList();
   }
 
   @override
@@ -46,8 +64,19 @@ class DriftTokenRepository implements TokenRepository {
       _db.into(_db.tokenEntries).insertOnConflictUpdate(_toCompanion(entry));
 
   @override
-  Future<void> delete(String id) =>
-      (_db.delete(_db.tokenEntries)..where((t) => t.id.equals(id))).go();
+  Future<void> delete(String id) async {
+    // Soft delete: mark tombstone so the deletion propagates via sync.
+    final now = DateTime.now().millisecondsSinceEpoch;
+    await (_db.update(_db.tokenEntries)..where((t) => t.id.equals(id))).write(
+      TokenEntriesCompanion(
+        deletedAt: Value(now),
+        updatedAt: Value(now),
+      ),
+    );
+  }
+
+  @override
+  Future<void> clearAll() => _db.delete(_db.tokenEntries).go();
 
   @override
   Future<Map<TokenStatus, List<TokenEntry>>> scanStatus({
@@ -74,6 +103,7 @@ class DriftTokenRepository implements TokenRepository {
         note: r.note,
         createdAt: _ms(r.createdAt)!,
         updatedAt: _ms(r.updatedAt)!,
+        deletedAt: _ms(r.deletedAt),
       );
 
   TokenEntriesCompanion _toCompanion(TokenEntry e) => TokenEntriesCompanion(
@@ -85,6 +115,7 @@ class DriftTokenRepository implements TokenRepository {
         note: Value(e.note),
         createdAt: Value(e.createdAt.millisecondsSinceEpoch),
         updatedAt: Value(e.updatedAt.millisecondsSinceEpoch),
+        deletedAt: Value(e.deletedAt?.millisecondsSinceEpoch),
       );
 
   static DateTime? _ms(int? v) =>

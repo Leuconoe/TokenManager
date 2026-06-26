@@ -56,9 +56,7 @@ class BackupRepository {
         .toList();
 
     if (mode == ImportMode.overwrite) {
-      for (final existing in await _tokens.list()) {
-        await _tokens.delete(existing.id);
-      }
+      await _tokens.clearAll(); // hard wipe (incl. tombstones), then insert
       for (final e in list) {
         await _tokens.upsert(e);
       }

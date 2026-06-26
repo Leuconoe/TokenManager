@@ -28,6 +28,7 @@ class TokenEntries extends Table {
   TextColumn get note => text().withDefault(const Constant(''))();
   IntColumn get createdAt => integer().named('created_at')();
   IntColumn get updatedAt => integer().named('updated_at')();
+  IntColumn get deletedAt => integer().named('deleted_at').nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -41,7 +42,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -56,6 +57,10 @@ class AppDatabase extends _$AppDatabase {
           // v2: add url column.
           if (from < 2) {
             await m.addColumn(tokenEntries, tokenEntries.url);
+          }
+          // v3: add deleted_at tombstone column.
+          if (from < 3) {
+            await m.addColumn(tokenEntries, tokenEntries.deletedAt);
           }
         },
       );

@@ -13,6 +13,7 @@ class TokenEntry {
   final String note; // free memo; token values forbidden (warned, not blocked)
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt; // tombstone — soft delete for sync propagation
 
   const TokenEntry({
     required this.id,
@@ -23,7 +24,10 @@ class TokenEntry {
     this.issuedAt,
     this.expiresAt,
     this.note = '',
+    this.deletedAt,
   });
+
+  bool get isDeleted => deletedAt != null;
 
   /// Derived lifecycle status at [now].
   TokenStatus statusAt(DateTime now, {int soonDays = TokenStatus.defaultSoonDays}) =>
@@ -38,6 +42,8 @@ class TokenEntry {
     bool clearExpiresAt = false,
     String? note,
     DateTime? updatedAt,
+    DateTime? deletedAt,
+    bool clearDeletedAt = false,
   }) {
     return TokenEntry(
       id: id,
@@ -48,6 +54,7 @@ class TokenEntry {
       note: note ?? this.note,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: clearDeletedAt ? null : (deletedAt ?? this.deletedAt),
     );
   }
 
@@ -62,6 +69,7 @@ class TokenEntry {
         'note': note,
         'createdAt': createdAt.millisecondsSinceEpoch,
         'updatedAt': updatedAt.millisecondsSinceEpoch,
+        'deletedAt': deletedAt?.millisecondsSinceEpoch,
       };
 
   factory TokenEntry.fromJson(Map<String, dynamic> json) {
@@ -76,6 +84,7 @@ class TokenEntry {
       note: (json['note'] as String?) ?? '',
       createdAt: ms(json['createdAt'])!,
       updatedAt: ms(json['updatedAt'])!,
+      deletedAt: ms(json['deletedAt']),
     );
   }
 
@@ -89,9 +98,10 @@ class TokenEntry {
       other.expiresAt == expiresAt &&
       other.note == note &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
 
   @override
-  int get hashCode => Object.hash(
-      id, serviceName, url, issuedAt, expiresAt, note, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, serviceName, url, issuedAt, expiresAt,
+      note, createdAt, updatedAt, deletedAt);
 }

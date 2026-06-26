@@ -58,9 +58,24 @@ class $TokenEntriesTable extends TokenEntries
   late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
       'updated_at', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, serviceName, url, issuedAt, expiresAt, note, createdAt, updatedAt];
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        serviceName,
+        url,
+        issuedAt,
+        expiresAt,
+        note,
+        createdAt,
+        updatedAt,
+        deletedAt
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -112,6 +127,10 @@ class $TokenEntriesTable extends TokenEntries
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
     return context;
   }
 
@@ -137,6 +156,8 @@ class $TokenEntriesTable extends TokenEntries
           .read(DriftSqlType.int, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}deleted_at']),
     );
   }
 
@@ -155,6 +176,7 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
   final String note;
   final int createdAt;
   final int updatedAt;
+  final int? deletedAt;
   const TokenEntryRow(
       {required this.id,
       required this.serviceName,
@@ -163,7 +185,8 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
       this.expiresAt,
       required this.note,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      this.deletedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -179,6 +202,9 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
     map['note'] = Variable<String>(note);
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
     return map;
   }
 
@@ -196,6 +222,9 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
       note: Value(note),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -211,6 +240,7 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
       note: serializer.fromJson<String>(json['note']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
     );
   }
   @override
@@ -225,6 +255,7 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
       'note': serializer.toJson<String>(note),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
     };
   }
 
@@ -236,7 +267,8 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
           Value<int?> expiresAt = const Value.absent(),
           String? note,
           int? createdAt,
-          int? updatedAt}) =>
+          int? updatedAt,
+          Value<int?> deletedAt = const Value.absent()}) =>
       TokenEntryRow(
         id: id ?? this.id,
         serviceName: serviceName ?? this.serviceName,
@@ -246,6 +278,7 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
         note: note ?? this.note,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
       );
   TokenEntryRow copyWithCompanion(TokenEntriesCompanion data) {
     return TokenEntryRow(
@@ -258,6 +291,7 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -271,14 +305,15 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
           ..write('expiresAt: $expiresAt, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, serviceName, url, issuedAt, expiresAt, note, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, serviceName, url, issuedAt, expiresAt,
+      note, createdAt, updatedAt, deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -290,7 +325,8 @@ class TokenEntryRow extends DataClass implements Insertable<TokenEntryRow> {
           other.expiresAt == this.expiresAt &&
           other.note == this.note &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
@@ -302,6 +338,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
   final Value<String> note;
   final Value<int> createdAt;
   final Value<int> updatedAt;
+  final Value<int?> deletedAt;
   final Value<int> rowid;
   const TokenEntriesCompanion({
     this.id = const Value.absent(),
@@ -312,6 +349,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TokenEntriesCompanion.insert({
@@ -323,6 +361,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
     this.note = const Value.absent(),
     required int createdAt,
     required int updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         serviceName = Value(serviceName),
@@ -337,6 +376,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
     Expression<String>? note,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -348,6 +388,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -361,6 +402,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
       Value<String>? note,
       Value<int>? createdAt,
       Value<int>? updatedAt,
+      Value<int?>? deletedAt,
       Value<int>? rowid}) {
     return TokenEntriesCompanion(
       id: id ?? this.id,
@@ -371,6 +413,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -402,6 +445,9 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<int>(updatedAt.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -419,6 +465,7 @@ class TokenEntriesCompanion extends UpdateCompanion<TokenEntryRow> {
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -446,6 +493,7 @@ typedef $$TokenEntriesTableCreateCompanionBuilder = TokenEntriesCompanion
   Value<String> note,
   required int createdAt,
   required int updatedAt,
+  Value<int?> deletedAt,
   Value<int> rowid,
 });
 typedef $$TokenEntriesTableUpdateCompanionBuilder = TokenEntriesCompanion
@@ -458,6 +506,7 @@ typedef $$TokenEntriesTableUpdateCompanionBuilder = TokenEntriesCompanion
   Value<String> note,
   Value<int> createdAt,
   Value<int> updatedAt,
+  Value<int?> deletedAt,
   Value<int> rowid,
 });
 
@@ -493,6 +542,9 @@ class $$TokenEntriesTableFilterComposer
 
   ColumnFilters<int> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$TokenEntriesTableOrderingComposer
@@ -527,6 +579,9 @@ class $$TokenEntriesTableOrderingComposer
 
   ColumnOrderings<int> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TokenEntriesTableAnnotationComposer
@@ -561,6 +616,9 @@ class $$TokenEntriesTableAnnotationComposer
 
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
 class $$TokenEntriesTableTableManager extends RootTableManager<
@@ -597,6 +655,7 @@ class $$TokenEntriesTableTableManager extends RootTableManager<
             Value<String> note = const Value.absent(),
             Value<int> createdAt = const Value.absent(),
             Value<int> updatedAt = const Value.absent(),
+            Value<int?> deletedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TokenEntriesCompanion(
@@ -608,6 +667,7 @@ class $$TokenEntriesTableTableManager extends RootTableManager<
             note: note,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            deletedAt: deletedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -619,6 +679,7 @@ class $$TokenEntriesTableTableManager extends RootTableManager<
             Value<String> note = const Value.absent(),
             required int createdAt,
             required int updatedAt,
+            Value<int?> deletedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TokenEntriesCompanion.insert(
@@ -630,6 +691,7 @@ class $$TokenEntriesTableTableManager extends RootTableManager<
             note: note,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            deletedAt: deletedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
