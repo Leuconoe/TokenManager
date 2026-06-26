@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { uuid, type TokenEntry } from '../lib/domain';
   import { looksLikeToken } from '../lib/noteDetector';
+  import { activeTabHint } from '../lib/currentTab';
 
   let { existing, onSave, onDelete, onCancel }: {
     existing: TokenEntry | null;
@@ -11,6 +13,17 @@
 
   let serviceName = $state(existing?.serviceName ?? '');
   let url = $state(existing?.url ?? '');
+  let autofilled = $state(false);
+
+  // Add mode: pre-fill service name + URL from the current tab (activeTab).
+  onMount(async () => {
+    if (existing) return;
+    const hint = await activeTabHint();
+    if (!hint) return;
+    if (!serviceName) serviceName = hint.serviceName;
+    if (!url) url = hint.url;
+    autofilled = true;
+  });
   let issued = $state(toInput(existing?.issuedAt ?? null));
   let expires = $state(toInput(existing?.expiresAt ?? null));
   let note = $state(existing?.note ?? '');
@@ -53,6 +66,8 @@
 </script>
 
 <div class="banner">⚠️ 토큰 값은 입력하지 마세요. 이 앱은 토큰 추적용이며 값 저장을 권장하지 않습니다.</div>
+
+{#if autofilled}<div class="ok">현재 탭에서 자동 입력됨 (수정 가능)</div>{/if}
 
 <label>서비스 명 *</label>
 <input bind:value={serviceName} placeholder="예: GitHub PAT - CI 배포용" />
