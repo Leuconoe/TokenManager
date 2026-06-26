@@ -267,6 +267,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get updateFailed => 'Error al buscar actualizaciones';
 
   @override
+  String mergeConflictTitle(String name) {
+    return 'Conflicto en \'$name\'';
+  }
+
+  @override
+  String get mergeConflictBody =>
+      'Esta entrada difiere de la local (p. ej. caducidad). ¿Cuál usar?';
+
+  @override
+  String get mergeKeepLocal => 'Conservar local';
+
+  @override
+  String get mergeUseImported => 'Usar importada';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count token(s) caducado(s)';
   }

@@ -260,6 +260,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get updateFailed => 'アップデートの確認に失敗しました';
 
   @override
+  String mergeConflictTitle(String name) {
+    return '「$name」の競合';
+  }
+
+  @override
+  String get mergeConflictBody => 'この項目はローカルと異なります（例: 有効期限）。どちらを使いますか？';
+
+  @override
+  String get mergeKeepLocal => 'ローカルを保持';
+
+  @override
+  String get mergeUseImported => '取り込んだ値';
+
+  @override
   String notifExpiredTitle(int count) {
     return '期限切れトークン $count 件';
   }

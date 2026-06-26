@@ -575,6 +575,30 @@ abstract class AppLocalizations {
   /// **'업데이트 확인에 실패했습니다'**
   String get updateFailed;
 
+  /// No description provided for @mergeConflictTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\' 충돌'**
+  String mergeConflictTitle(String name);
+
+  /// No description provided for @mergeConflictBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 항목이 로컬과 다릅니다(예: 만료일 차이). 어느 값을 사용할까요?'**
+  String get mergeConflictBody;
+
+  /// No description provided for @mergeKeepLocal.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬 유지'**
+  String get mergeKeepLocal;
+
+  /// No description provided for @mergeUseImported.
+  ///
+  /// In ko, this message translates to:
+  /// **'가져온 값'**
+  String get mergeUseImported;
+
   /// No description provided for @notifExpiredTitle.
   ///
   /// In ko, this message translates to:

@@ -266,6 +266,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateFailed => 'Update check failed';
 
   @override
+  String mergeConflictTitle(String name) {
+    return '\'$name\' conflict';
+  }
+
+  @override
+  String get mergeConflictBody =>
+      'This entry differs from the local one (e.g. expiry date). Which one to use?';
+
+  @override
+  String get mergeKeepLocal => 'Keep local';
+
+  @override
+  String get mergeUseImported => 'Use imported';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count expired token(s)';
   }

@@ -258,6 +258,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get updateFailed => '检查更新失败';
 
   @override
+  String mergeConflictTitle(String name) {
+    return '“$name”冲突';
+  }
+
+  @override
+  String get mergeConflictBody => '该条目与本地不同（如过期日期）。使用哪个？';
+
+  @override
+  String get mergeKeepLocal => '保留本地';
+
+  @override
+  String get mergeUseImported => '使用导入';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count 个已过期令牌';
   }
@@ -563,6 +577,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get updateFailed => '檢查更新失敗';
+
+  @override
+  String mergeConflictTitle(String name) {
+    return '「$name」衝突';
+  }
+
+  @override
+  String get mergeConflictBody => '此項目與本機不同（如到期日）。要使用哪一個？';
+
+  @override
+  String get mergeKeepLocal => '保留本機';
+
+  @override
+  String get mergeUseImported => '使用匯入';
 
   @override
   String notifExpiredTitle(int count) {

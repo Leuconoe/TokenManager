@@ -81,9 +81,30 @@ class _BackupPageState extends ConsumerState<BackupPage> {
       final picked = await FilePicker.pickFiles();
       if (picked == null || picked.files.single.path == null) return;
       final file = File(picked.files.single.path!);
-      final result = await ref
-          .read(backupRepositoryProvider)
-          .import(file, _passCtrl.text, _mode);
+      final result = await ref.read(backupRepositoryProvider).import(
+            file,
+            _passCtrl.text,
+            _mode,
+            onConflict: (local, imported) async {
+              if (!mounted) return true;
+              final useImported = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(l.mergeConflictTitle(imported.serviceName)),
+                  content: Text(l.mergeConflictBody),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: Text(l.mergeKeepLocal)),
+                    FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text(l.mergeUseImported)),
+                  ],
+                ),
+              );
+              return useImported ?? false; // dismiss = keep local
+            },
+          );
       await ref.read(tokenListProvider.notifier).setFilter(null);
       _snack(l.restoreDone(result.count));
     } on BackupAuthException {

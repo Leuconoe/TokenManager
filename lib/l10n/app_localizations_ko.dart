@@ -260,6 +260,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateFailed => '업데이트 확인에 실패했습니다';
 
   @override
+  String mergeConflictTitle(String name) {
+    return '\'$name\' 충돌';
+  }
+
+  @override
+  String get mergeConflictBody => '이 항목이 로컬과 다릅니다(예: 만료일 차이). 어느 값을 사용할까요?';
+
+  @override
+  String get mergeKeepLocal => '로컬 유지';
+
+  @override
+  String get mergeUseImported => '가져온 값';
+
+  @override
   String notifExpiredTitle(int count) {
     return '만료된 토큰 $count건';
   }

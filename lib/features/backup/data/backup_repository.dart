@@ -40,11 +40,15 @@ class BackupRepository {
   /// Decrypts [file] with [passphrase] and applies entries.
   /// merge: upsert by id (keep others). overwrite: replace all.
   /// Throws BackupAuthException / BackupFormatException on failure.
+  /// Merge is keyed by serviceName (title): new titles are added; on a real
+  /// difference [onConflict] decides (true = use imported, false = keep local).
+  /// If [onConflict] is null, imported wins.
   Future<BackupResult> import(
     File file,
     String passphrase,
-    ImportMode mode,
-  ) async {
+    ImportMode mode, {
+    Future<bool> Function(TokenEntry local, TokenEntry imported)? onConflict,
+  }) async {
     final cipher = await file.readAsBytes();
     final plain = await _crypto.decryptBackup(cipher, passphrase);
     final list = (jsonDecode(utf8.decode(plain)) as List)
@@ -55,10 +59,45 @@ class BackupRepository {
       for (final existing in await _tokens.list()) {
         await _tokens.delete(existing.id);
       }
+      for (final e in list) {
+        await _tokens.upsert(e);
+      }
+      return BackupResult(list.length);
     }
-    for (final e in list) {
-      await _tokens.upsert(e);
+
+    // Merge keyed by title.
+    final byTitle = {for (final e in await _tokens.list()) e.serviceName: e};
+    var applied = 0;
+    for (final inc in list) {
+      final local = byTitle[inc.serviceName];
+      if (local == null) {
+        await _tokens.upsert(inc);
+        applied++;
+        continue;
+      }
+      if (_sameData(local, inc)) continue;
+      final useImported = (await onConflict?.call(local, inc)) ?? true;
+      if (useImported) {
+        // Keep the title unique by overwriting the local row in place.
+        await _tokens.upsert(TokenEntry(
+          id: local.id,
+          serviceName: inc.serviceName,
+          url: inc.url,
+          issuedAt: inc.issuedAt,
+          expiresAt: inc.expiresAt,
+          note: inc.note,
+          createdAt: local.createdAt,
+          updatedAt: DateTime.now(),
+        ));
+        applied++;
+      }
     }
-    return BackupResult(list.length);
+    return BackupResult(applied);
   }
+
+  static bool _sameData(TokenEntry a, TokenEntry b) =>
+      a.url == b.url &&
+      a.issuedAt == b.issuedAt &&
+      a.expiresAt == b.expiresAt &&
+      a.note == b.note;
 }

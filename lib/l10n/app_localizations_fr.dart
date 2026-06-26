@@ -269,6 +269,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get updateFailed => 'Échec de la recherche de mises à jour';
 
   @override
+  String mergeConflictTitle(String name) {
+    return 'Conflit « $name »';
+  }
+
+  @override
+  String get mergeConflictBody =>
+      'Cette entrée diffère de la locale (ex. date d\'expiration). Laquelle utiliser ?';
+
+  @override
+  String get mergeKeepLocal => 'Garder locale';
+
+  @override
+  String get mergeUseImported => 'Utiliser importée';
+
+  @override
   String notifExpiredTitle(int count) {
     return '$count jeton(s) expiré(s)';
   }
