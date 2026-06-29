@@ -5,7 +5,7 @@
   import { activeEntries, type TokenEntry } from './lib/domain';
   import { isConnected, disconnect } from './lib/drive';
   import { BackupAuthError } from './lib/crypto';
-  import { syncNow } from './lib/sync';
+  import { syncNow, purgeRemoteTombstones } from './lib/sync';
   import { t } from './lib/i18n.svelte';
   import TokenList from './components/TokenList.svelte';
   import TokenEdit from './components/TokenEdit.svelte';
@@ -140,12 +140,21 @@
     );
     await persist(next);
   }
-  // Permanent purge — hard-remove the row locally.
+  // Permanent purge — hard-remove the row locally + strip from remote so it
+  // doesn't get re-added by the next merge.
   async function onPurge(id: string) {
     await persist(entries.filter((e) => e.id !== id));
+    void purgeRemote(new Set([id]));
   }
   async function onPurgeAll() {
     await persist(entries.filter((e) => e.deletedAt == null));
+    void purgeRemote(undefined);
+  }
+  async function purgeRemote(ids: Set<string> | undefined) {
+    try {
+      const sp = await getSyncPassphrase();
+      if ((await isConnected()) && sp) await purgeRemoteTombstones(sp, false, ids);
+    } catch { /* best effort */ }
   }
 
   function lock() {

@@ -98,6 +98,8 @@
   "updateAvailableTitle": "有可用更新",
   "updateAvailableBody": "有新版本 {latest}（目前 {current}）。要開啟發行頁面嗎？",
   "updateOpen": "開啟",
+  "updateAutoInstall": "更新並重新啟動",
+  "updateInstalling": "正在下載更新… 應用程式將關閉並重新啟動",
   "updateFailed": "檢查更新失敗",
   "mergeConflictTitle": "「{name}」衝突",
   "mergeConflictBody": "此項目與本機不同（如到期日）。要使用哪一個？",

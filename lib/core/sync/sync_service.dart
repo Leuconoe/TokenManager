@@ -63,6 +63,22 @@ class SyncService {
     return true;
   }
 
+  /// Permanently remove tombstones from the remote file so an "empty trash"
+  /// (or per-item purge) sticks instead of being re-added by the next merge.
+  /// [ids] null = strip all tombstones; otherwise only those ids. Best-effort.
+  Future<void> purgeTombstones(String passphrase, {Set<String>? ids}) async {
+    final bytes = await storage.read();
+    if (bytes == null) return;
+    final entries = await _decode(passphrase, bytes);
+    final kept = entries
+        .where((e) =>
+            e.deletedAt == null || (ids != null && !ids.contains(e.id)))
+        .toList();
+    if (kept.length != entries.length) {
+      await storage.write(await _encode(passphrase, kept));
+    }
+  }
+
   Future<Uint8List> _encode(String passphrase, List<TokenEntry> entries) {
     final json = jsonEncode(entries.map((e) => e.toJson()).toList());
     return crypto.encryptBackup(Uint8List.fromList(utf8.encode(json)), passphrase);

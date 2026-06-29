@@ -98,6 +98,8 @@
   "updateAvailableTitle": "有可用更新",
   "updateAvailableBody": "有新版本 {latest}（当前 {current}）。要打开发布页面吗？",
   "updateOpen": "打开",
+  "updateAutoInstall": "更新并重启",
+  "updateInstalling": "正在下载更新… 应用将关闭并重启",
   "updateFailed": "检查更新失败",
   "mergeConflictTitle": "“{name}”冲突",
   "mergeConflictBody": "该条目与本地不同（如过期日期）。使用哪个？",

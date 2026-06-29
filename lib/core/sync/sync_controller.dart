@@ -87,4 +87,31 @@ class SyncController {
       await syncNow();
     } catch (_) {/* ignore — manual sync surfaces errors */}
   }
+
+  /// Strip purged tombstones from the remote file so an "empty trash" sticks
+  /// (otherwise the next merge re-adds them). Best-effort; never throws.
+  /// [ids] null = all tombstones; otherwise only those ids.
+  Future<void> purgeRemoteTombstones({Set<String>? ids}) async {
+    try {
+      if (!await settings.getSyncEnabled()) return;
+      final pass = await settings.getSyncPassphrase();
+      if (pass == null || pass.isEmpty) return;
+      final provider = await settings.getSyncProvider();
+      final SyncStorage storage;
+      if (provider == 'drive') {
+        final api = await driveAuth.driveApi();
+        if (api == null) return;
+        storage = DriveSyncStorage(api);
+      } else {
+        final folder = await settings.getSyncFolder();
+        if (folder == null) return;
+        storage =
+            Platform.isAndroid ? SafSyncStorage(folder) : FolderSyncStorage(folder);
+      }
+      await SyncService(repo, crypto, storage).purgeTombstones(pass, ids: ids);
+      dlog('purge: stripped remote tombstones (${ids == null ? "all" : ids.length})');
+    } catch (e) {
+      dlog('purge: remote strip failed $e');
+    }
+  }
 }

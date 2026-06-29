@@ -13,6 +13,7 @@ import '../../core/crypto/passphrase_crypto.dart' show BackupAuthException;
 import '../../core/debug/debug_log.dart';
 import '../../core/platform/secure_screen.dart';
 import '../../core/providers.dart';
+import '../../core/update/windows_updater.dart';
 import '../../l10n/app_localizations.dart';
 import '../tokens/token_providers.dart';
 import '../tokens/trash_page.dart';
@@ -425,24 +426,34 @@ class SettingsPage extends ConsumerWidget {
             SnackBar(content: Text(l.updateUpToDate(info.current))));
         return;
       }
-      final open = await showDialog<bool>(
+      final canAuto = Platform.isWindows && info.windowsAssetUrl.isNotEmpty;
+      final action = await showDialog<String>(
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(l.updateAvailableTitle),
           content: Text(l.updateAvailableBody(info.latest, info.current)),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
+                onPressed: () => Navigator.pop(ctx, 'cancel'),
                 child: Text(l.actionCancel)),
-            FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, 'open'),
                 child: Text(l.updateOpen)),
+            if (canAuto)
+              FilledButton(
+                  onPressed: () => Navigator.pop(ctx, 'auto'),
+                  child: Text(l.updateAutoInstall)),
           ],
         ),
       );
-      if (open == true && info.url.isNotEmpty) {
+      if (action == 'open' && info.url.isNotEmpty) {
         await launchUrl(Uri.parse(info.url),
             mode: LaunchMode.externalApplication);
+      } else if (action == 'auto') {
+        messenger.showSnackBar(SnackBar(content: Text(l.updateInstalling)));
+        // Launches the detached helper and exits the app; the helper swaps the
+        // files and relaunches.
+        await WindowsUpdater.downloadInstallAndRestart(info.windowsAssetUrl);
       }
     } catch (_) {
       if (!context.mounted) return;

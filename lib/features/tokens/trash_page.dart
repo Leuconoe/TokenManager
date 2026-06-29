@@ -84,6 +84,9 @@ class TrashPage extends ConsumerWidget {
                                   await ref
                                       .read(tokenRepositoryProvider)
                                       .purge(e.id);
+                                  await ref
+                                      .read(syncControllerProvider)
+                                      .purgeRemoteTombstones(ids: {e.id});
                                   ref.invalidate(_deletedProvider);
                                 },
                               ),
@@ -118,6 +121,7 @@ class TrashPage extends ConsumerWidget {
     );
     if (ok == true) {
       await ref.read(tokenRepositoryProvider).purgeAllDeleted();
+      await ref.read(syncControllerProvider).purgeRemoteTombstones();
       ref.invalidate(_deletedProvider);
     }
   }

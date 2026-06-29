@@ -98,6 +98,8 @@
   "updateAvailableTitle": "Update available",
   "updateAvailableBody": "Version {latest} is available (current {current}). Open the release page?",
   "updateOpen": "Open",
+  "updateAutoInstall": "Update & restart",
+  "updateInstalling": "Downloading update… the app will close and restart",
   "updateFailed": "Update check failed",
   "mergeConflictTitle": "'{name}' conflict",
   "mergeConflictBody": "This entry differs from the local one (e.g. expiry date). Which one to use?",

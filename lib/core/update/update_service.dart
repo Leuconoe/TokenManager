@@ -11,11 +11,13 @@ class UpdateInfo {
   final String current;
   final String latest; // '' if not resolvable
   final String url;
+  final String windowsAssetUrl; // direct .zip download for auto-update ('' if none)
   const UpdateInfo({
     required this.hasUpdate,
     required this.current,
     required this.latest,
     required this.url,
+    this.windowsAssetUrl = '',
   });
 }
 
@@ -39,11 +41,24 @@ class UpdateService {
       final name = '${json['name'] ?? ''} ${json['tag_name'] ?? ''}';
       final latest = RegExp(r'(\d+)\.(\d+)\.(\d+)').firstMatch(name)?.group(0) ?? '';
       final url = (json['html_url'] ?? '').toString();
+      // Find the Windows x64 zip asset for auto-update.
+      var winUrl = '';
+      final assets = json['assets'];
+      if (assets is List) {
+        for (final a in assets) {
+          final n = (a is Map ? a['name'] : '')?.toString() ?? '';
+          if (n.contains('windows') && n.endsWith('.zip')) {
+            winUrl = (a['browser_download_url'] ?? '').toString();
+            break;
+          }
+        }
+      }
       return UpdateInfo(
         hasUpdate: latest.isNotEmpty && _isNewer(latest, current),
         current: current,
         latest: latest,
         url: url,
+        windowsAssetUrl: winUrl,
       );
     } finally {
       client.close(force: true);

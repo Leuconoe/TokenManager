@@ -323,6 +323,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get updateOpen => '開く';
 
   @override
+  String get updateAutoInstall => '更新して再起動';
+
+  @override
+  String get updateInstalling => '更新をダウンロード中… アプリが終了して再起動します';
+
+  @override
   String get updateFailed => 'アップデートの確認に失敗しました';
 
   @override

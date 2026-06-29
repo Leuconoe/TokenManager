@@ -335,6 +335,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get updateOpen => 'Ouvrir';
 
   @override
+  String get updateAutoInstall => 'Mettre à jour et redémarrer';
+
+  @override
+  String get updateInstalling =>
+      'Téléchargement de la mise à jour… l\'app va se fermer et redémarrer';
+
+  @override
   String get updateFailed => 'Échec de la recherche de mises à jour';
 
   @override

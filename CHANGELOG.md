@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.0.4
+
+- **Windows auto-update**: when an update is available, Windows offers
+  "Update & restart" — a detached helper waits for the app to exit, downloads
+  the release zip, installs it over the app folder, and relaunches.
+- **Fix: emptying the Trash now sticks across sync.** Permanent delete (per-item
+  and bulk) also strips the tombstone from the remote sync file, so it is no
+  longer re-added by the next merge.
+
 ## v1.0.3
 
 - **Search** the list by title / site / note (app + extension).

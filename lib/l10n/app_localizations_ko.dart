@@ -323,6 +323,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateOpen => '열기';
 
   @override
+  String get updateAutoInstall => '자동 업데이트 및 재시작';
+
+  @override
+  String get updateInstalling => '업데이트 다운로드 중… 앱이 종료 후 재시작됩니다';
+
+  @override
   String get updateFailed => '업데이트 확인에 실패했습니다';
 
   @override

@@ -98,6 +98,8 @@
   "updateAvailableTitle": "Actualización disponible",
   "updateAvailableBody": "La versión {latest} está disponible (actual {current}). ¿Abrir la página de la versión?",
   "updateOpen": "Abrir",
+  "updateAutoInstall": "Actualizar y reiniciar",
+  "updateInstalling": "Descargando actualización… la app se cerrará y reiniciará",
   "updateFailed": "Error al buscar actualizaciones",
   "mergeConflictTitle": "Conflicto en '{name}'",
   "mergeConflictBody": "Esta entrada difiere de la local (p. ej. caducidad). ¿Cuál usar?",

@@ -73,3 +73,23 @@ export async function syncNow(
   dlog(`syncNow: pushed merged=${merged.length} tomb=${tomb(merged)}`);
   return merged;
 }
+
+/** Strip purged tombstones from the remote file so an "empty trash" sticks
+ *  (otherwise the next merge re-adds them). [ids] undefined = all tombstones.
+ *  Best-effort. */
+export async function purgeRemoteTombstones(
+  syncPass: string,
+  interactive: boolean,
+  ids?: Set<string>,
+): Promise<void> {
+  const bytes = await drive.download(interactive);
+  if (bytes == null) return;
+  const entries = await decode(syncPass, bytes);
+  const kept = entries.filter(
+    (e) => e.deletedAt == null || (ids != null && !ids.has(e.id)),
+  );
+  if (kept.length !== entries.length) {
+    await drive.upload(interactive, await encode(syncPass, kept));
+    dlog(`purge: stripped remote tombstones (${ids ? ids.size : 'all'})`);
+  }
+}

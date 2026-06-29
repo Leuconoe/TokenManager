@@ -98,6 +98,8 @@
   "updateAvailableTitle": "アップデートあり",
   "updateAvailableBody": "新しいバージョン {latest} があります（現在 {current}）。リリースページを開きますか？",
   "updateOpen": "開く",
+  "updateAutoInstall": "更新して再起動",
+  "updateInstalling": "更新をダウンロード中… アプリが終了して再起動します",
   "updateFailed": "アップデートの確認に失敗しました",
   "mergeConflictTitle": "「{name}」の競合",
   "mergeConflictBody": "この項目はローカルと異なります（例: 有効期限）。どちらを使いますか？",

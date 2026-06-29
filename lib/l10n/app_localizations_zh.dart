@@ -320,6 +320,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get updateOpen => '打开';
 
   @override
+  String get updateAutoInstall => '更新并重启';
+
+  @override
+  String get updateInstalling => '正在下载更新… 应用将关闭并重启';
+
+  @override
   String get updateFailed => '检查更新失败';
 
   @override
@@ -780,6 +786,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get updateOpen => '開啟';
+
+  @override
+  String get updateAutoInstall => '更新並重新啟動';
+
+  @override
+  String get updateInstalling => '正在下載更新… 應用程式將關閉並重新啟動';
 
   @override
   String get updateFailed => '檢查更新失敗';

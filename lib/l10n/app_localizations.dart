@@ -695,6 +695,18 @@ abstract class AppLocalizations {
   /// **'열기'**
   String get updateOpen;
 
+  /// No description provided for @updateAutoInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'자동 업데이트 및 재시작'**
+  String get updateAutoInstall;
+
+  /// No description provided for @updateInstalling.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트 다운로드 중… 앱이 종료 후 재시작됩니다'**
+  String get updateInstalling;
+
   /// No description provided for @updateFailed.
   ///
   /// In ko, this message translates to:
