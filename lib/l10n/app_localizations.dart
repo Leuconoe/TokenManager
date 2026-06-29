@@ -557,6 +557,60 @@ abstract class AppLocalizations {
   /// **'지우기'**
   String get debugLogClear;
 
+  /// No description provided for @trashTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴지통'**
+  String get trashTitle;
+
+  /// No description provided for @trashSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 삭제된 토큰 (30일 후 자동 정리)'**
+  String get trashSubtitle;
+
+  /// No description provided for @trashEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴지통이 비어 있습니다'**
+  String get trashEmpty;
+
+  /// No description provided for @trashHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'토큰을 복원하거나 완전 삭제할 수 있습니다. 30일 지난 삭제 항목은 자동 정리됩니다.'**
+  String get trashHint;
+
+  /// No description provided for @trashRestore.
+  ///
+  /// In ko, this message translates to:
+  /// **'복원'**
+  String get trashRestore;
+
+  /// No description provided for @trashPurge.
+  ///
+  /// In ko, this message translates to:
+  /// **'완전 삭제'**
+  String get trashPurge;
+
+  /// No description provided for @trashPurgeAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴지통 비우기'**
+  String get trashPurgeAll;
+
+  /// No description provided for @trashPurgeAllConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴지통의 모든 항목을 완전 삭제할까요?'**
+  String get trashPurgeAllConfirm;
+
+  /// No description provided for @trashDeletedOn.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제일 {date}'**
+  String trashDeletedOn(Object date);
+
   /// No description provided for @settingsCheckUpdate.
   ///
   /// In ko, this message translates to:

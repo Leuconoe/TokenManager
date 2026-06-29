@@ -255,6 +255,38 @@ class AppLocalizationsEs extends AppLocalizations {
   String get debugLogClear => 'Borrar';
 
   @override
+  String get trashTitle => 'Papelera';
+
+  @override
+  String get trashSubtitle =>
+      'Tokens eliminados recientemente (se borran tras 30 días)';
+
+  @override
+  String get trashEmpty => 'La papelera está vacía';
+
+  @override
+  String get trashHint =>
+      'Restaura un token o elimínalo permanentemente. Las eliminaciones de más de 30 días se borran automáticamente.';
+
+  @override
+  String get trashRestore => 'Restaurar';
+
+  @override
+  String get trashPurge => 'Eliminar definitivamente';
+
+  @override
+  String get trashPurgeAll => 'Vaciar papelera';
+
+  @override
+  String get trashPurgeAllConfirm =>
+      '¿Eliminar definitivamente todos los elementos de la papelera?';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return 'Eliminado el $date';
+  }
+
+  @override
   String get settingsCheckUpdate => 'Buscar actualizaciones';
 
   @override

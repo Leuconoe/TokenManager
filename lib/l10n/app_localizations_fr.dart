@@ -257,6 +257,38 @@ class AppLocalizationsFr extends AppLocalizations {
   String get debugLogClear => 'Effacer';
 
   @override
+  String get trashTitle => 'Corbeille';
+
+  @override
+  String get trashSubtitle =>
+      'Jetons récemment supprimés (effacés après 30 jours)';
+
+  @override
+  String get trashEmpty => 'La corbeille est vide';
+
+  @override
+  String get trashHint =>
+      'Restaurez un jeton ou supprimez-le définitivement. Les suppressions de plus de 30 jours sont effacées automatiquement.';
+
+  @override
+  String get trashRestore => 'Restaurer';
+
+  @override
+  String get trashPurge => 'Supprimer définitivement';
+
+  @override
+  String get trashPurgeAll => 'Vider la corbeille';
+
+  @override
+  String get trashPurgeAllConfirm =>
+      'Supprimer définitivement tous les éléments de la corbeille ?';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return 'Supprimé le $date';
+  }
+
+  @override
   String get settingsCheckUpdate => 'Rechercher des mises à jour';
 
   @override

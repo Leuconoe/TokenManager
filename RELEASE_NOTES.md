@@ -1,10 +1,15 @@
-# TokenManager v1.0.1
+# TokenManager v1.0.2
 
 **An offline-first vault that never stores token values.** It records only the *metadata* of your API tokens / keys — service name, URL, issued/expiry dates, a note — and reminds you to rotate or revoke them before they expire. Available on **Android**, **Windows**, and as a **Chrome extension**.
 
-## 🛠 Fixed in v1.0.1
+## 🆕 New in v1.0.2
 
-- **Deleted tokens no longer reappear after sync.** Deletions/edits now use a monotonic timestamp so a delete always wins over the version it was applied to, even across devices with skewed clocks.
+- **Trash (recycle bin)** — deleted tokens go to a Trash view where you can **restore** them or **permanently delete** (including a bulk *empty trash*). Tombstones auto-clear after 30 days. App: Settings → Trash. Extension: 🗑 in the toolbar.
+
+## 🛠 Fixed (v1.0.1 – v1.0.2)
+
+- **Deleted tokens no longer reappear after sync.** Deletions/edits use a monotonic timestamp so a delete always wins over the version it was applied to, even across devices with skewed clocks.
+- **Deterministic sync merge** — concurrent edits with identical timestamps now converge to the same result on every device (deletion wins ties).
 
 ---
 

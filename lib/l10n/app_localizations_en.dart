@@ -254,6 +254,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debugLogClear => 'Clear';
 
   @override
+  String get trashTitle => 'Trash';
+
+  @override
+  String get trashSubtitle =>
+      'Recently deleted tokens (auto-cleared after 30 days)';
+
+  @override
+  String get trashEmpty => 'Trash is empty';
+
+  @override
+  String get trashHint =>
+      'Restore a token, or delete it permanently. Deletions older than 30 days are cleared automatically.';
+
+  @override
+  String get trashRestore => 'Restore';
+
+  @override
+  String get trashPurge => 'Delete permanently';
+
+  @override
+  String get trashPurgeAll => 'Empty trash';
+
+  @override
+  String get trashPurgeAllConfirm =>
+      'Permanently delete all items in the trash?';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return 'Deleted $date';
+  }
+
+  @override
   String get settingsCheckUpdate => 'Check for updates';
 
   @override

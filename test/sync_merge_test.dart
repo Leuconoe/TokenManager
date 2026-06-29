@@ -9,10 +9,11 @@ TokenEntry e(
   required int updated,
   bool deleted = false,
   String note = '',
+  String? id,
 }) {
   final ms = DateTime(2026).add(Duration(minutes: updated));
   return TokenEntry(
-    id: title, // stable id by title for the test
+    id: id ?? title, // stable id by title for the test
     serviceName: title,
     note: note,
     createdAt: DateTime(2026),
@@ -48,6 +49,23 @@ void main() {
     test('distinct titles are unioned', () {
       final m = mergeByTitle([e('A', updated: 1)], [e('B', updated: 1)]);
       expect(m.map((x) => x.serviceName).toSet(), {'A', 'B'});
+    });
+
+    // Concurrent edits from a clock-skewed base can produce EQUAL updatedAt.
+    test('equal updatedAt: deletion wins, regardless of merge order', () {
+      final live = e('GitHub', updated: 5, id: 'a');
+      final tomb = e('GitHub', updated: 5, deleted: true, id: 'b');
+      expect(mergeByTitle([live], [tomb]).single.isDeleted, isTrue);
+      expect(mergeByTitle([tomb], [live]).single.isDeleted, isTrue);
+    });
+
+    test('equal updatedAt, both live: same winner regardless of order', () {
+      final a = e('GitHub', updated: 5, note: 'A', id: 'id-a');
+      final b = e('GitHub', updated: 5, note: 'B', id: 'id-b');
+      final ab = mergeByTitle([a], [b]).single;
+      final ba = mergeByTitle([b], [a]).single;
+      expect(ab.id, ba.id); // converges to the same entry both ways
+      expect(ab.id, 'id-b'); // higher id wins the tie
     });
   });
 }

@@ -248,6 +248,35 @@ class AppLocalizationsJa extends AppLocalizations {
   String get debugLogClear => 'クリア';
 
   @override
+  String get trashTitle => 'ゴミ箱';
+
+  @override
+  String get trashSubtitle => '最近削除したトークン（30日後に自動削除）';
+
+  @override
+  String get trashEmpty => 'ゴミ箱は空です';
+
+  @override
+  String get trashHint => 'トークンを復元、または完全に削除できます。30日経過した削除項目は自動的に削除されます。';
+
+  @override
+  String get trashRestore => '復元';
+
+  @override
+  String get trashPurge => '完全に削除';
+
+  @override
+  String get trashPurgeAll => 'ゴミ箱を空にする';
+
+  @override
+  String get trashPurgeAllConfirm => 'ゴミ箱のすべての項目を完全に削除しますか？';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return '削除日 $date';
+  }
+
+  @override
   String get settingsCheckUpdate => 'アップデートを確認';
 
   @override

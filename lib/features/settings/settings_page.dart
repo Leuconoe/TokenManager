@@ -12,6 +12,7 @@ import '../../core/crypto/passphrase_crypto.dart' show BackupAuthException;
 import '../../core/debug/debug_log.dart';
 import '../../core/platform/secure_screen.dart';
 import '../../core/providers.dart';
+import '../tokens/trash_page.dart';
 import '../../l10n/app_localizations.dart';
 import '../tokens/token_providers.dart';
 import 'locale_controller.dart';
@@ -260,6 +261,15 @@ class SettingsPage extends ConsumerWidget {
                   ref.invalidate(_captureProvider);
                 },
               ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: Text(l.trashTitle),
+              subtitle: Text(l.trashSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TrashPage())),
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.bug_report_outlined),

@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.2
+
+- **Trash (recycle bin)**: a dedicated view lists soft-deleted tokens. Each can be
+  **restored** or **permanently deleted**, plus a **bulk "empty trash"**. Tombstones
+  older than 30 days are auto-purged on launch (assumes all devices have synced
+  the deletion by then). App: Settings → Trash. Extension: 🗑 in the toolbar.
+- **Deterministic merge tiebreak**: when two entries share a title and the exact
+  same `updatedAt` (possible from clock-skewed concurrent edits), the merge now
+  resolves by a stable total order — deletion wins a tie, otherwise higher id —
+  so every device converges to the same result instead of diverging.
+
 ## v1.0.1
 
 - **Fix: deleted tokens reappearing after sync.** Deletes/edits now use a

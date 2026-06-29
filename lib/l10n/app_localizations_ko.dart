@@ -248,6 +248,35 @@ class AppLocalizationsKo extends AppLocalizations {
   String get debugLogClear => '지우기';
 
   @override
+  String get trashTitle => '휴지통';
+
+  @override
+  String get trashSubtitle => '최근 삭제된 토큰 (30일 후 자동 정리)';
+
+  @override
+  String get trashEmpty => '휴지통이 비어 있습니다';
+
+  @override
+  String get trashHint => '토큰을 복원하거나 완전 삭제할 수 있습니다. 30일 지난 삭제 항목은 자동 정리됩니다.';
+
+  @override
+  String get trashRestore => '복원';
+
+  @override
+  String get trashPurge => '완전 삭제';
+
+  @override
+  String get trashPurgeAll => '휴지통 비우기';
+
+  @override
+  String get trashPurgeAllConfirm => '휴지통의 모든 항목을 완전 삭제할까요?';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return '삭제일 $date';
+  }
+
+  @override
   String get settingsCheckUpdate => '업데이트 확인';
 
   @override

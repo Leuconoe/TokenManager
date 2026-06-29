@@ -10,12 +10,15 @@
   import TokenEdit from './components/TokenEdit.svelte';
   import Backup from './components/Backup.svelte';
   import Settings from './components/Settings.svelte';
+  import Trash from './components/Trash.svelte';
+
+  const RETENTION_MS = 30 * 86_400_000; // auto-purge tombstones older than 30d
 
   let locked = $state(true);
   let hasVault = $state(false);
   let pass = $state(''); // session passphrase — memory only, never persisted
   let entries = $state<TokenEntry[]>([]);
-  let view = $state<'list' | 'edit' | 'backup' | 'settings'>('list');
+  let view = $state<'list' | 'edit' | 'backup' | 'settings' | 'trash'>('list');
   let editing = $state<TokenEntry | null>(null);
   let pwInput = $state('');
   let err = $state('');
@@ -44,6 +47,10 @@
       pwInput = '';
       locked = false;
       if (!hasVault) await save(pass, entries);
+      // Auto-purge tombstones past the retention window (housekeeping).
+      const cutoff = Date.now() - RETENTION_MS;
+      const kept = entries.filter((e) => e.deletedAt == null || e.deletedAt >= cutoff);
+      if (kept.length !== entries.length) await persist(kept);
       // Quiet pull/merge/push on unlock (non-interactive; ignore failures).
       void quietSync();
     } catch {
@@ -119,6 +126,22 @@
     view = 'list';
   }
 
+  // Restore a tombstoned entry (revive + monotonic bump so it propagates).
+  async function onRestore(id: string) {
+    const now = Date.now();
+    const next = entries.map((e) =>
+      e.id === id ? { ...e, deletedAt: null, updatedAt: Math.max(now, e.updatedAt + 1) } : e,
+    );
+    await persist(next);
+  }
+  // Permanent purge — hard-remove the row locally.
+  async function onPurge(id: string) {
+    await persist(entries.filter((e) => e.id !== id));
+  }
+  async function onPurgeAll() {
+    await persist(entries.filter((e) => e.deletedAt == null));
+  }
+
   function lock() {
     locked = true;
     pass = '';
@@ -130,6 +153,7 @@
     view === 'edit' ? (editing ? t('titleEdit') : t('titleAdd'))
     : view === 'backup' ? t('titleBackup')
     : view === 'settings' ? t('titleSettings')
+    : view === 'trash' ? t('trashTitle')
     : t('titleList'),
   );
 </script>
@@ -165,6 +189,7 @@
         <button class="icon" title={t('syncNow')} onclick={doMainSync} disabled={syncingMain}>{syncingMain ? '…' : '🔄'}</button>
         <button class="icon" title={t('titleSettings')} onclick={() => (view = 'settings')}>⚙</button>
         <button class="icon" title={t('titleBackup')} onclick={() => (view = 'backup')}>⛁</button>
+        <button class="icon" title={t('trashTitle')} onclick={() => (view = 'trash')}>🗑</button>
         <button class="icon" title={t('unlock')} onclick={lock}>🔒</button>
       {/if}
     </header>
@@ -176,6 +201,8 @@
         <TokenEdit existing={editing} {onSave} {onDelete} onCancel={() => (view = 'list')} />
       {:else if view === 'backup'}
         <Backup {entries} {pass} onImported={persist} />
+      {:else if view === 'trash'}
+        <Trash deleted={entries.filter((e) => e.deletedAt != null)} {onRestore} {onPurge} {onPurgeAll} />
       {:else}
         <Settings {runSync} />
       {/if}

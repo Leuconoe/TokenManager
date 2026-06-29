@@ -55,6 +55,12 @@ Future<void> main() async {
   // Load the saved language (null = follow system, English fallback).
   await container.read(localeControllerProvider.notifier).load();
 
+  // Auto-purge tombstones older than the retention window (housekeeping; by now
+  // all devices have synced the deletion).
+  await container
+      .read(tokenRepositoryProvider)
+      .purgeDeletedBefore(DateTime.now().subtract(const Duration(days: 30)));
+
   // Folder sync: pull + merge on launch (no-op if disabled/not configured).
   await container.read(syncControllerProvider).syncQuietly();
 

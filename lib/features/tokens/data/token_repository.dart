@@ -21,6 +21,22 @@ abstract interface class TokenRepository {
   /// Soft delete (tombstone) so the deletion can be synced.
   Future<void> delete(String id);
 
+  /// Tombstoned entries (deletedAt != null), newest deletion first.
+  Future<List<TokenEntry>> listDeleted();
+
+  /// Un-delete a tombstone (revives + bumps updatedAt so the revive syncs).
+  Future<void> restore(String id);
+
+  /// Hard-delete a single row (permanent purge — local only).
+  Future<void> purge(String id);
+
+  /// Hard-delete all tombstones (permanent purge — local only).
+  Future<int> purgeAllDeleted();
+
+  /// Auto-purge tombstones whose deletion is older than [cutoff] (housekeeping,
+  /// assumes all devices have synced the deletion by then).
+  Future<int> purgeDeletedBefore(DateTime cutoff);
+
   /// Hard-wipe every row (used by overwrite-restore). Bypasses tombstones.
   Future<void> clearAll();
 
@@ -81,6 +97,47 @@ class DriftTokenRepository implements TokenRepository {
       ),
     );
   }
+
+  @override
+  Future<List<TokenEntry>> listDeleted() async {
+    final rows = await (_db.select(_db.tokenEntries)
+          ..where((t) => t.deletedAt.isNotNull()))
+        .get();
+    final entries = rows.map(_toEntry).toList();
+    entries.sort((a, b) => (b.deletedAt ?? b.updatedAt)
+        .compareTo(a.deletedAt ?? a.updatedAt)); // newest deletion first
+    return entries;
+  }
+
+  @override
+  Future<void> restore(String id) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final existing = await getById(id);
+    final bumped = (existing != null && existing.updatedAt.millisecondsSinceEpoch >= now)
+        ? existing.updatedAt.millisecondsSinceEpoch + 1
+        : now;
+    await (_db.update(_db.tokenEntries)..where((t) => t.id.equals(id))).write(
+      TokenEntriesCompanion(
+        deletedAt: const Value(null),
+        updatedAt: Value(bumped),
+      ),
+    );
+  }
+
+  @override
+  Future<void> purge(String id) async {
+    await (_db.delete(_db.tokenEntries)..where((t) => t.id.equals(id))).go();
+  }
+
+  @override
+  Future<int> purgeAllDeleted() =>
+      (_db.delete(_db.tokenEntries)..where((t) => t.deletedAt.isNotNull())).go();
+
+  @override
+  Future<int> purgeDeletedBefore(DateTime cutoff) =>
+      (_db.delete(_db.tokenEntries)
+            ..where((t) => t.deletedAt.isSmallerThanValue(cutoff.millisecondsSinceEpoch)))
+          .go();
 
   @override
   Future<void> clearAll() => _db.delete(_db.tokenEntries).go();

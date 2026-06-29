@@ -245,6 +245,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get debugLogClear => '清除';
 
   @override
+  String get trashTitle => '回收站';
+
+  @override
+  String get trashSubtitle => '最近删除的令牌（30天后自动清理）';
+
+  @override
+  String get trashEmpty => '回收站为空';
+
+  @override
+  String get trashHint => '可恢复令牌或永久删除。超过30天的删除项会自动清理。';
+
+  @override
+  String get trashRestore => '恢复';
+
+  @override
+  String get trashPurge => '永久删除';
+
+  @override
+  String get trashPurgeAll => '清空回收站';
+
+  @override
+  String get trashPurgeAllConfirm => '永久删除回收站中的所有项目？';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return '删除于 $date';
+  }
+
+  @override
   String get settingsCheckUpdate => '检查更新';
 
   @override
@@ -652,6 +681,35 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get debugLogClear => '清除';
+
+  @override
+  String get trashTitle => '回收筒';
+
+  @override
+  String get trashSubtitle => '最近刪除的權杖（30天後自動清理）';
+
+  @override
+  String get trashEmpty => '回收筒是空的';
+
+  @override
+  String get trashHint => '可還原權杖或永久刪除。超過30天的刪除項目會自動清理。';
+
+  @override
+  String get trashRestore => '還原';
+
+  @override
+  String get trashPurge => '永久刪除';
+
+  @override
+  String get trashPurgeAll => '清空回收筒';
+
+  @override
+  String get trashPurgeAllConfirm => '永久刪除回收筒中的所有項目？';
+
+  @override
+  String trashDeletedOn(Object date) {
+    return '刪除於 $date';
+  }
 
   @override
   String get settingsCheckUpdate => '檢查更新';
