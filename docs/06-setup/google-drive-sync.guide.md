@@ -81,6 +81,21 @@
 > 데스크톱 앱의 secret은 OAuth 사양상 "공개 클라이언트"로 취급돼 기밀이 아니지만,
 > googleapis_auth가 요구하므로 포함합니다. `oauth.local.json`은 커밋하지 않습니다(.gitignore).
 
+## 3-D. CI 배포 빌드에 OAuth 주입 (GitHub Secrets)
+로컬 빌드는 `.env` / `oauth.local.json`로 OAuth가 들어가지만, **CI가 만드는 릴리스 빌드**는
+이 파일들이 gitignore라 비어 있습니다 → 그대로면 배포본은 Drive 동기화 시 "미설정"으로 동작.
+배포본에서도 동기화하려면 **GitHub → Settings → Secrets and variables → Actions** 에 등록:
+
+| Secret | 값 |
+|--------|----|
+| `DESKTOP_OAUTH_CLIENT_ID` | Windows "데스크톱 앱" 클라이언트 ID |
+| `DESKTOP_OAUTH_CLIENT_SECRET` | 그 클라이언트 보안 비밀 |
+| `WEB_OAUTH_CLIENT_ID` | 익스텐션 "웹 애플리케이션" 클라이언트 ID |
+
+> 워크플로가 이 값을 `--dart-define`(Windows) / `VITE_GOOGLE_OAUTH_CLIENT_ID`(익스텐션)로 주입합니다.
+> 미설정이어도 빌드는 정상 — Drive 동기화만 "미설정" 상태가 됩니다. (Android는 패키지+SHA-1 자동 매칭이라 secret 불필요)
+> 등록 후 **버전을 올려 push**하면 그 릴리스부터 배포본도 동기화 가능.
+
 ## 4. 사용
 ### Android 앱
 설정 → **폴더 동기화 ON** → 방식 **Google Drive** → **"Google Drive 연결"**(계정 동의)

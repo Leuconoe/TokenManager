@@ -113,7 +113,13 @@ jobs:
       - run: flutter config --enable-windows-desktop
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build windows --release
+      # Desktop OAuth client (Drive sync) — injected from secrets, never committed.
+      # If the secrets are unset, the build still works; Drive sync just shows
+      # "not configured" until the user runs a local build with oauth.local.json.
+      - run: >
+          flutter build windows --release
+          --dart-define=TM_DESKTOP_OAUTH_CLIENT_ID=${{ secrets.DESKTOP_OAUTH_CLIENT_ID }}
+          --dart-define=TM_DESKTOP_OAUTH_CLIENT_SECRET=${{ secrets.DESKTOP_OAUTH_CLIENT_SECRET }}
       - name: Zip Windows build
         shell: pwsh
         run: |
@@ -135,6 +141,10 @@ jobs:
         with: { node-version: '20' }
       - name: Build extension
         working-directory: extension
+        env:
+          # Web OAuth client id for Drive sync — injected from a secret (the
+          # client id is public; it ships in the bundle anyway). Empty if unset.
+          VITE_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.WEB_OAUTH_CLIENT_ID }}
         run: |
           npm ci
           npm run build
