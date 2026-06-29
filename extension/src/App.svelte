@@ -99,16 +99,21 @@
 
   async function onSave(entry: TokenEntry) {
     const i = entries.findIndex((e) => e.id === entry.id);
-    const next = i >= 0 ? entries.map((e) => (e.id === entry.id ? entry : e)) : [...entries, entry];
+    // Monotonic updatedAt: an edit must beat the version it edits, even if that
+    // version carries a future timestamp from a clock-skewed device.
+    const saved =
+      i >= 0 ? { ...entry, updatedAt: Math.max(entry.updatedAt, entries[i].updatedAt + 1) } : entry;
+    const next = i >= 0 ? entries.map((e) => (e.id === entry.id ? saved : e)) : [...entries, saved];
     await persist(next);
     view = 'list';
   }
   async function onDelete(id: string) {
-    // Soft delete (tombstone) so the deletion propagates through sync instead of
-    // the entry reappearing from a remote copy.
+    // Soft delete (tombstone). updatedAt is bumped past the entry's own value so
+    // the deletion always supersedes the copy it was applied to — otherwise a
+    // remote/local copy with a future (clock-skewed) timestamp would resurrect it.
     const now = Date.now();
     const next = entries.map((e) =>
-      e.id === id ? { ...e, deletedAt: now, updatedAt: now } : e,
+      e.id === id ? { ...e, deletedAt: now, updatedAt: Math.max(now, e.updatedAt + 1) } : e,
     );
     await persist(next);
     view = 'list';

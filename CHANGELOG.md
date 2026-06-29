@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.0.1
+
+- **Fix: deleted tokens reappearing after sync.** Deletes/edits now use a
+  monotonic `updatedAt` (`max(now, previous+1)`) so a deletion always supersedes
+  the version it was applied to — previously a remote/local copy carrying a
+  future timestamp from a clock-skewed device could resurrect a deleted entry.
+  Applies to the app and the extension. Added a "RESURRECTED …" diagnostic line
+  to the extension's debug log.
+
 ## v1.0.0
 
 First stable release.

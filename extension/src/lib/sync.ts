@@ -45,9 +45,11 @@ export async function syncNow(
     await drive.upload(interactive, await encode(syncPass, localAll));
     return localAll;
   }
-  dlog(`syncNow: remote ${remoteBytes.length}B — merging`);
+  const remote = await decode(syncPass, remoteBytes);
+  const tomb = (a: TokenEntry[]) => a.filter((e) => e.deletedAt != null).length;
+  dlog(`syncNow: remote ${remoteBytes.length}B entries=${remote.length} (tomb local=${tomb(localAll)} remote=${tomb(remote)}) — merging`);
 
-  let merged = mergeByTitle(localAll, await decode(syncPass, remoteBytes));
+  let merged = mergeByTitle(localAll, remote);
 
   // Lost-update guard: re-read just before writing; fold in any change made
   // while we were merging/encrypting.
@@ -56,7 +58,18 @@ export async function syncNow(
     merged = mergeByTitle(merged, await decode(syncPass, beforeWrite));
   }
 
+  // Diagnostic: detect deletions undone by the merge (local tombstone -> live).
+  const locTomb = new Map(
+    localAll.filter((e) => e.deletedAt != null).map((e) => [e.id, e]),
+  );
+  for (const m of merged) {
+    if (m.deletedAt == null && locTomb.has(m.id)) {
+      const lt = locTomb.get(m.id)!;
+      dlog(`RESURRECTED "${m.serviceName}" localTombUpdatedAt=${lt.updatedAt} < remoteLiveUpdatedAt=${m.updatedAt} (Δ=${m.updatedAt - lt.updatedAt}ms)`);
+    }
+  }
+
   await drive.upload(interactive, await encode(syncPass, merged));
-  dlog(`syncNow: pushed merged=${merged.length}`);
+  dlog(`syncNow: pushed merged=${merged.length} tomb=${tomb(merged)}`);
   return merged;
 }

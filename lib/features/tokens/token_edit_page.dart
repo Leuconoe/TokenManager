@@ -92,6 +92,11 @@ class _TokenEditPageState extends ConsumerState<TokenEditPage> {
 
     final now = DateTime.now();
     final base = widget.existing;
+    // Monotonic updatedAt: an edit must beat the version it edits even if that
+    // version carries a future timestamp from a clock-skewed device.
+    final updatedAt = (base != null && !base.updatedAt.isBefore(now))
+        ? base.updatedAt.add(const Duration(milliseconds: 1))
+        : now;
     final entry = TokenEntry(
       id: base?.id ?? const Uuid().v4(),
       serviceName: _serviceCtrl.text.trim(),
@@ -100,7 +105,7 @@ class _TokenEditPageState extends ConsumerState<TokenEditPage> {
       expiresAt: _expiresAt,
       note: _noteCtrl.text,
       createdAt: base?.createdAt ?? now,
-      updatedAt: now,
+      updatedAt: updatedAt,
     );
     await ref.read(tokenListProvider.notifier).save(entry);
     if (mounted) Navigator.of(context).pop();

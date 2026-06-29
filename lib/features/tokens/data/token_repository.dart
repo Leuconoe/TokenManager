@@ -66,11 +66,18 @@ class DriftTokenRepository implements TokenRepository {
   @override
   Future<void> delete(String id) async {
     // Soft delete: mark tombstone so the deletion propagates via sync.
+    // updatedAt is bumped past the row's own value so the tombstone always
+    // supersedes the copy it was applied to — even if that copy carries a
+    // future timestamp from a clock-skewed device (otherwise it resurrects).
     final now = DateTime.now().millisecondsSinceEpoch;
+    final existing = await getById(id);
+    final bumped = (existing != null && existing.updatedAt.millisecondsSinceEpoch >= now)
+        ? existing.updatedAt.millisecondsSinceEpoch + 1
+        : now;
     await (_db.update(_db.tokenEntries)..where((t) => t.id.equals(id))).write(
       TokenEntriesCompanion(
         deletedAt: Value(now),
-        updatedAt: Value(now),
+        updatedAt: Value(bumped),
       ),
     );
   }

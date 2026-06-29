@@ -1,6 +1,12 @@
-# TokenManager v1.0.0 — first stable release 🎉
+# TokenManager v1.0.1
 
 **An offline-first vault that never stores token values.** It records only the *metadata* of your API tokens / keys — service name, URL, issued/expiry dates, a note — and reminds you to rotate or revoke them before they expire. Available on **Android**, **Windows**, and as a **Chrome extension**.
+
+## 🛠 Fixed in v1.0.1
+
+- **Deleted tokens no longer reappear after sync.** Deletions/edits now use a monotonic timestamp so a delete always wins over the version it was applied to, even across devices with skewed clocks.
+
+---
 
 > The root cause behind token/API-key supply-chain incidents is that issued tokens are **left unrotated because nobody tracks their lifetime**. TokenManager tracks the lifetime — not the secret.
 
