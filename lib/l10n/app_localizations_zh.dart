@@ -27,10 +27,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get listTitle => '令牌保管库';
 
   @override
+  String get searchHint => '搜索名称 / 站点 / 备注';
+
+  @override
+  String get searchNoResults => '无结果';
+
+  @override
   String get sortExpiry => '即将过期优先';
 
   @override
   String get sortName => '按服务名称';
+
+  @override
+  String get sortBy => '排序';
+
+  @override
+  String get sortCreated => '按创建';
+
+  @override
+  String get sortSite => '按站点';
+
+  @override
+  String get sortAsc => '升序';
+
+  @override
+  String get sortDesc => '降序';
 
   @override
   String get sortUpdated => '最近更新';
@@ -194,6 +215,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsTitle => '设置';
+
+  @override
+  String get versionTitle => '版本';
 
   @override
   String get noExpiryWarnTitle => '无期限令牌警告周期';
@@ -465,10 +489,31 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get listTitle => '權杖保管庫';
 
   @override
+  String get searchHint => '搜尋名稱 / 網站 / 備註';
+
+  @override
+  String get searchNoResults => '無結果';
+
+  @override
   String get sortExpiry => '即將到期優先';
 
   @override
   String get sortName => '依服務名稱';
+
+  @override
+  String get sortBy => '排序';
+
+  @override
+  String get sortCreated => '依建立';
+
+  @override
+  String get sortSite => '依網站';
+
+  @override
+  String get sortAsc => '升冪';
+
+  @override
+  String get sortDesc => '降冪';
 
   @override
   String get sortUpdated => '最近更新';
@@ -632,6 +677,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsTitle => '設定';
+
+  @override
+  String get versionTitle => '版本';
 
   @override
   String get noExpiryWarnTitle => '無期限權杖警告週期';

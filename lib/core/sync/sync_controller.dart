@@ -3,6 +3,7 @@
 
 import 'dart:io' show Platform;
 
+import '../crypto/passphrase_crypto.dart' show BackupAuthException;
 import '../debug/debug_log.dart';
 import '../domain/crypto_port.dart';
 import '../../features/settings/settings_repository.dart';
@@ -61,8 +62,21 @@ class SyncController {
       await settings.setSyncLast(DateTime.now());
       dlog('sync: done merged=${r.merged}');
       return r.merged;
+    } on BackupAuthException {
+      // Wrong passphrase — keep the Drive connection; only the passphrase is off.
+      dlog('sync: ERROR passphrase mismatch');
+      rethrow;
     } catch (e) {
+      // Any other failure on the Drive provider (auth/refresh/transport) drops
+      // the connection so the user must reconnect (fresh consent) — a broken
+      // refresh token can't recover on its own.
       dlog('sync: ERROR $e');
+      if (provider == 'drive') {
+        dlog('sync: disconnecting Drive after failure');
+        try {
+          await driveAuth.signOut();
+        } catch (_) {/* ignore */}
+      }
       rethrow;
     }
   }

@@ -16,6 +16,9 @@ import 'data/token_repository.dart';
 import 'token_edit_page.dart';
 import 'token_providers.dart';
 
+/// Search query for the list (title / site / note). Session-scoped.
+final _searchProvider = StateProvider.autoDispose<String>((_) => '');
+
 class TokenListPage extends ConsumerWidget {
   const TokenListPage({super.key});
 
@@ -24,6 +27,17 @@ class TokenListPage extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final asyncState = ref.watch(tokenListProvider);
     final notifier = ref.read(tokenListProvider.notifier);
+    final curSort = asyncState.valueOrNull?.sort ?? TokenSort.expiry;
+    final asc = asyncState.valueOrNull?.ascending ?? true;
+
+    PopupMenuItem<TokenSort> sortItem(TokenSort s, String label) => PopupMenuItem(
+          value: s,
+          child: Row(children: [
+            Icon(s == curSort ? Icons.check : null, size: 18),
+            const SizedBox(width: 8),
+            Text(label),
+          ]),
+        );
 
     return Scaffold(
       appBar: AppBar(
@@ -31,15 +45,19 @@ class TokenListPage extends ConsumerWidget {
         actions: [
           PopupMenuButton<TokenSort>(
             icon: const Icon(Icons.sort),
+            tooltip: l.sortBy,
             onSelected: notifier.setSort,
             itemBuilder: (_) => [
-              PopupMenuItem(
-                  value: TokenSort.expirySoonest, child: Text(l.sortExpiry)),
-              PopupMenuItem(
-                  value: TokenSort.serviceName, child: Text(l.sortName)),
-              PopupMenuItem(
-                  value: TokenSort.recentlyUpdated, child: Text(l.sortUpdated)),
+              sortItem(TokenSort.expiry, l.sortExpiry),
+              sortItem(TokenSort.created, l.sortCreated),
+              sortItem(TokenSort.name, l.sortName),
+              sortItem(TokenSort.site, l.sortSite),
             ],
+          ),
+          IconButton(
+            icon: Icon(asc ? Icons.arrow_upward : Icons.arrow_downward),
+            tooltip: asc ? l.sortAsc : l.sortDesc,
+            onPressed: () => notifier.toggleSortDir(),
           ),
           IconButton(
             icon: const Icon(Icons.sync),
@@ -61,6 +79,18 @@ class TokenListPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            child: TextField(
+              decoration: InputDecoration(
+                isDense: true,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                hintText: l.searchHint,
+                border: const OutlineInputBorder(),
+              ),
+              onChanged: (v) => ref.read(_searchProvider.notifier).state = v,
+            ),
+          ),
           _FilterChips(
             selected: asyncState.valueOrNull?.filter,
             onSelected: notifier.setFilter,
@@ -69,14 +99,26 @@ class TokenListPage extends ConsumerWidget {
             child: asyncState.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('오류: $e')),
-              data: (s) => s.entries.isEmpty
-                  ? const _EmptyState()
-                  : ListView.separated(
-                      itemCount: s.entries.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
-                      itemBuilder: (_, i) =>
-                          _TokenTile(entry: s.entries[i], leadDays: s.leadDays),
-                    ),
+              data: (s) {
+                final q = ref.watch(_searchProvider).trim().toLowerCase();
+                final shown = q.isEmpty
+                    ? s.entries
+                    : s.entries.where((e) {
+                        return e.serviceName.toLowerCase().contains(q) ||
+                            e.url.toLowerCase().contains(q) ||
+                            e.note.toLowerCase().contains(q);
+                      }).toList();
+                if (s.entries.isEmpty) return const _EmptyState();
+                if (shown.isEmpty) {
+                  return Center(child: Text(l.searchNoResults));
+                }
+                return ListView.separated(
+                  itemCount: shown.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (_, i) =>
+                      _TokenTile(entry: shown[i], leadDays: s.leadDays),
+                );
+              },
             ),
           ),
         ],

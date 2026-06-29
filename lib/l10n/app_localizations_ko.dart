@@ -27,10 +27,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String get listTitle => '토큰 보관함';
 
   @override
+  String get searchHint => '제목 / 사이트 / 노트 검색';
+
+  @override
+  String get searchNoResults => '검색 결과 없음';
+
+  @override
   String get sortExpiry => '만료 임박순';
 
   @override
   String get sortName => '서비스명순';
+
+  @override
+  String get sortBy => '정렬 기준';
+
+  @override
+  String get sortCreated => '생성일순';
+
+  @override
+  String get sortSite => '사이트순';
+
+  @override
+  String get sortAsc => '오름차순';
+
+  @override
+  String get sortDesc => '내림차순';
 
   @override
   String get sortUpdated => '최근 수정순';
@@ -196,6 +217,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsTitle => '설정';
+
+  @override
+  String get versionTitle => '버전';
 
   @override
   String get noExpiryWarnTitle => '무기한 토큰 경고 주기';

@@ -18,8 +18,18 @@ const SALT_LEN = 16;
 const NONCE_LEN = 12;
 const TAG_LEN = 16; // 128-bit GCM tag
 
-export class BackupAuthError extends Error {}
-export class BackupFormatError extends Error {}
+export class BackupAuthError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = 'BackupAuthError';
+  }
+}
+export class BackupFormatError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = 'BackupFormatError';
+  }
+}
 
 function b64e(u: Uint8Array): string {
   let s = '';

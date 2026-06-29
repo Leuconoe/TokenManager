@@ -44,6 +44,8 @@ class SettingsRepository {
   static const _kSyncLast = 'tm_sync_last_v1';
   static const _kSyncInterval = 'tm_sync_interval_v1'; // auto-sync cadence
   static const _kCapture = 'tm_capture_protect_v1'; // Android FLAG_SECURE
+  static const _kSortKey = 'tm_sort_key_v1';
+  static const _kSortAsc = 'tm_sort_asc_v1';
   final FlutterSecureStorage _storage;
 
   SettingsRepository([FlutterSecureStorage? storage])
@@ -148,4 +150,13 @@ class SettingsRepository {
 
   Future<void> setCaptureProtection(bool enabled) =>
       _storage.write(key: _kCapture, value: enabled ? 'true' : 'false');
+
+  /// Token list sort key (enum name) + direction. Default: 'expiry' ascending.
+  Future<String?> getSortKey() => _storage.read(key: _kSortKey);
+  Future<void> setSortKey(String key) =>
+      _storage.write(key: _kSortKey, value: key);
+  Future<bool> getSortAsc() async =>
+      (await _storage.read(key: _kSortAsc)) != 'false';
+  Future<void> setSortAsc(bool asc) =>
+      _storage.write(key: _kSortAsc, value: asc ? 'true' : 'false');
 }

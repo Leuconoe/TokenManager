@@ -1,15 +1,19 @@
-# TokenManager v1.0.2
+# TokenManager v1.0.3
 
 **An offline-first vault that never stores token values.** It records only the *metadata* of your API tokens / keys — service name, URL, issued/expiry dates, a note — and reminds you to rotate or revoke them before they expire. Available on **Android**, **Windows**, and as a **Chrome extension**.
 
-## 🆕 New in v1.0.2
+## 🆕 New in v1.0.3
 
-- **Trash (recycle bin)** — deleted tokens go to a Trash view where you can **restore** them or **permanently delete** (including a bulk *empty trash*). Tombstones auto-clear after 30 days. App: Settings → Trash. Extension: 🗑 in the toolbar.
+- **Search** the list by title / site / note.
+- **Sort** by expiry / created / name / site, ascending or descending (remembered).
+- **App version** shown in Settings.
+- **Trash (recycle bin)** — restore or permanently delete soft-deleted tokens, with a bulk *empty trash*; tombstones auto-clear after 30 days.
 
-## 🛠 Fixed (v1.0.1 – v1.0.2)
+## 🛠 Fixed
 
-- **Deleted tokens no longer reappear after sync.** Deletions/edits use a monotonic timestamp so a delete always wins over the version it was applied to, even across devices with skewed clocks.
-- **Deterministic sync merge** — concurrent edits with identical timestamps now converge to the same result on every device (deletion wins ties).
+- **Google Drive sync recovery** — a failed sync now drops the connection (except a wrong passphrase) and reconnecting runs a fresh consent, recovering from a broken/expired token instead of getting stuck.
+- **Deleted tokens no longer reappear after sync** (monotonic timestamps; deterministic merge that converges on every device).
+- **Extension popup** no longer grows without bound — it's a fixed height and the list scrolls.
 
 ---
 

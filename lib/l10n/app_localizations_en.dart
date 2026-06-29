@@ -27,10 +27,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get listTitle => 'Token Vault';
 
   @override
+  String get searchHint => 'Search title / site / note';
+
+  @override
+  String get searchNoResults => 'No results';
+
+  @override
   String get sortExpiry => 'Expiring soonest';
 
   @override
   String get sortName => 'Service name';
+
+  @override
+  String get sortBy => 'Sort by';
+
+  @override
+  String get sortCreated => 'By created';
+
+  @override
+  String get sortSite => 'By site';
+
+  @override
+  String get sortAsc => 'Ascending';
+
+  @override
+  String get sortDesc => 'Descending';
 
   @override
   String get sortUpdated => 'Recently updated';
@@ -200,6 +221,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Settings';
+
+  @override
+  String get versionTitle => 'Version';
 
   @override
   String get noExpiryWarnTitle => 'No-expiry warning interval';

@@ -28,10 +28,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get listTitle => 'Coffre de jetons';
 
   @override
+  String get searchHint => 'Rechercher nom / site / note';
+
+  @override
+  String get searchNoResults => 'Aucun résultat';
+
+  @override
   String get sortExpiry => 'Expiration la plus proche';
 
   @override
   String get sortName => 'Nom du service';
+
+  @override
+  String get sortBy => 'Trier par';
+
+  @override
+  String get sortCreated => 'Par création';
+
+  @override
+  String get sortSite => 'Par site';
+
+  @override
+  String get sortAsc => 'Croissant';
+
+  @override
+  String get sortDesc => 'Décroissant';
 
   @override
   String get sortUpdated => 'Récemment modifiés';
@@ -203,6 +224,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Paramètres';
+
+  @override
+  String get versionTitle => 'Version';
 
   @override
   String get noExpiryWarnTitle => 'Intervalle d\'alerte sans expiration';

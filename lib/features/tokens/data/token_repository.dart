@@ -6,11 +6,11 @@ import '../../../core/db/app_database.dart';
 import '../../../core/domain/token_entry.dart';
 import '../../../core/domain/token_status.dart';
 
-enum TokenSort { expirySoonest, serviceName, recentlyUpdated }
+enum TokenSort { expiry, created, name, site }
 
 abstract interface class TokenRepository {
   /// Active (non-deleted) entries.
-  Future<List<TokenEntry>> list({TokenSort sort});
+  Future<List<TokenEntry>> list({TokenSort sort, bool ascending});
 
   /// ALL rows including tombstones (deletedAt != null) — for sync/backup.
   Future<List<TokenEntry>> listAll();
@@ -52,12 +52,13 @@ class DriftTokenRepository implements TokenRepository {
   DriftTokenRepository(this._db);
 
   @override
-  Future<List<TokenEntry>> list({TokenSort sort = TokenSort.expirySoonest}) async {
+  Future<List<TokenEntry>> list(
+      {TokenSort sort = TokenSort.expiry, bool ascending = true}) async {
     final rows = await (_db.select(_db.tokenEntries)
           ..where((t) => t.deletedAt.isNull()))
         .get();
     final entries = rows.map(_toEntry).toList();
-    _applySort(entries, sort);
+    _applySort(entries, sort, ascending);
     return entries;
   }
 
@@ -185,23 +186,26 @@ class DriftTokenRepository implements TokenRepository {
   static DateTime? _ms(int? v) =>
       v == null ? null : DateTime.fromMillisecondsSinceEpoch(v);
 
-  void _applySort(List<TokenEntry> list, TokenSort sort) {
+  void _applySort(List<TokenEntry> list, TokenSort sort, bool ascending) {
+    final dir = ascending ? 1 : -1;
     switch (sort) {
-      case TokenSort.expirySoonest:
-        // soonest expiry first; no-expiry entries sink to the bottom.
+      case TokenSort.expiry:
+        // no-expiry entries always sink to the bottom (both directions).
         list.sort((a, b) {
           if (a.expiresAt == null && b.expiresAt == null) {
             return a.serviceName.toLowerCase().compareTo(b.serviceName.toLowerCase());
           }
           if (a.expiresAt == null) return 1;
           if (b.expiresAt == null) return -1;
-          return a.expiresAt!.compareTo(b.expiresAt!);
+          return dir * a.expiresAt!.compareTo(b.expiresAt!);
         });
-      case TokenSort.serviceName:
+      case TokenSort.created:
+        list.sort((a, b) => dir * a.createdAt.compareTo(b.createdAt));
+      case TokenSort.name:
         list.sort((a, b) =>
-            a.serviceName.toLowerCase().compareTo(b.serviceName.toLowerCase()));
-      case TokenSort.recentlyUpdated:
-        list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+            dir * a.serviceName.toLowerCase().compareTo(b.serviceName.toLowerCase()));
+      case TokenSort.site:
+        list.sort((a, b) => dir * a.url.toLowerCase().compareTo(b.url.toLowerCase()));
     }
   }
 }

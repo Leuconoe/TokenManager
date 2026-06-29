@@ -20,9 +20,13 @@ class DriveAuthService implements DriveAuth {
   Future<String?> currentEmail() async =>
       (_gsi.currentUser ?? await _gsi.signInSilently())?.email;
 
-  /// Interactive sign-in. Returns the account email or null if cancelled.
+  /// Interactive sign-in (reconnect): sign out first so the account chooser
+  /// always appears and a fresh authorization is issued.
   @override
-  Future<String?> signIn() async => (await _gsi.signIn())?.email;
+  Future<String?> signIn() async {
+    await _gsi.signOut();
+    return (await _gsi.signIn())?.email;
+  }
 
   @override
   Future<void> signOut() => _gsi.signOut();

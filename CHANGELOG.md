@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.3
+
+- **Search** the list by title / site / note (app + extension).
+- **Sort** by expiry / created / name / site, each ascending or descending — the
+  choice is remembered (app + extension).
+- **Version shown in Settings** (app + extension).
+- **Drive sync resilience**: a failed sync now drops the Drive connection (except
+  a wrong passphrase), and connecting always runs a fresh consent — this recovers
+  from a broken/expired refresh token (the desktop "Could not determine client ID"
+  error) instead of getting stuck.
+- **Extension popup** is a fixed height now; the list scrolls instead of the
+  window growing without bound.
+
 ## v1.0.2
 
 - **Trash (recycle bin)**: a dedicated view lists soft-deleted tokens. Each can be

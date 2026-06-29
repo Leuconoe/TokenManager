@@ -143,6 +143,18 @@ abstract class AppLocalizations {
   /// **'토큰 보관함'**
   String get listTitle;
 
+  /// No description provided for @searchHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'제목 / 사이트 / 노트 검색'**
+  String get searchHint;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'검색 결과 없음'**
+  String get searchNoResults;
+
   /// No description provided for @sortExpiry.
   ///
   /// In ko, this message translates to:
@@ -154,6 +166,36 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'서비스명순'**
   String get sortName;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬 기준'**
+  String get sortBy;
+
+  /// No description provided for @sortCreated.
+  ///
+  /// In ko, this message translates to:
+  /// **'생성일순'**
+  String get sortCreated;
+
+  /// No description provided for @sortSite.
+  ///
+  /// In ko, this message translates to:
+  /// **'사이트순'**
+  String get sortSite;
+
+  /// No description provided for @sortAsc.
+  ///
+  /// In ko, this message translates to:
+  /// **'오름차순'**
+  String get sortAsc;
+
+  /// No description provided for @sortDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'내림차순'**
+  String get sortDesc;
 
   /// No description provided for @sortUpdated.
   ///
@@ -460,6 +502,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'설정'**
   String get settingsTitle;
+
+  /// No description provided for @versionTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'버전'**
+  String get versionTitle;
 
   /// No description provided for @noExpiryWarnTitle.
   ///

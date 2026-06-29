@@ -49,6 +49,25 @@ export async function setSyncPassphrase(p: string | null): Promise<void> {
   else await chrome.storage.local.set({ [SYNC_PASS_KEY]: p });
 }
 
+// Token list sort preference.
+export type SortKey = 'expiry' | 'created' | 'name' | 'site';
+export type SortDir = 'asc' | 'desc';
+export const SORT_KEY = 'tm_sort_v1';
+
+export async function getSort(): Promise<{ key: SortKey; dir: SortDir }> {
+  const r = await chrome.storage.local.get(SORT_KEY);
+  const v = r[SORT_KEY] as { key?: SortKey; dir?: SortDir } | undefined;
+  const keys: SortKey[] = ['expiry', 'created', 'name', 'site'];
+  return {
+    key: v && keys.includes(v.key as SortKey) ? (v.key as SortKey) : 'expiry',
+    dir: v?.dir === 'desc' ? 'desc' : 'asc',
+  };
+}
+
+export async function setSort(key: SortKey, dir: SortDir): Promise<void> {
+  await chrome.storage.local.set({ [SORT_KEY]: { key, dir } });
+}
+
 export async function getSyncLast(): Promise<number | null> {
   const r = await chrome.storage.local.get(SYNC_LAST_KEY);
   return (r[SYNC_LAST_KEY] as number | undefined) ?? null;

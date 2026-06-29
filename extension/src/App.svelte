@@ -3,7 +3,8 @@
   import { save, unlock, vaultExists } from './lib/vault';
   import { getExpiryLead, getSyncPassphrase, setSyncLast } from './lib/settings';
   import { activeEntries, type TokenEntry } from './lib/domain';
-  import { isConnected } from './lib/drive';
+  import { isConnected, disconnect } from './lib/drive';
+  import { BackupAuthError } from './lib/crypto';
   import { syncNow } from './lib/sync';
   import { t } from './lib/i18n.svelte';
   import TokenList from './components/TokenList.svelte';
@@ -72,6 +73,11 @@
       return { merged: activeEntries(merged).length };
     } catch (e) {
       const err = e as Error;
+      // Wrong passphrase keeps the connection; any other failure drops it so the
+      // user must reconnect (a stale/invalid token can't recover silently).
+      if (!(e instanceof BackupAuthError)) {
+        try { await disconnect(); } catch { /* ignore */ }
+      }
       return { error: `${err?.name ?? 'error'}: ${err?.message ?? ''}` };
     }
   }

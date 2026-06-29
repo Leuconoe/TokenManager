@@ -27,6 +27,8 @@
   let syncMsg = $state('');
   const redirect = redirectUri();
 
+  const appVersion = chrome.runtime.getManifest().version;
+
   // Debug log
   let logEntries = $state<LogEntry[]>([]);
   async function loadLog() {
@@ -40,6 +42,7 @@
   async function connectDrive() {
     syncMsg = '';
     try {
+      await disconnect(); // reconnect: drop any stale token, force fresh consent
       await getToken(true);
       connected = true;
     } catch (e) {
@@ -61,8 +64,10 @@
     const r = await runSync(true);
     if (r.error === 'needPass') syncMsg = t('syncNeedSetup');
     else if (r.error?.includes('BackupAuthError')) syncMsg = t('syncPassMismatch');
-    else if (r.error) syncMsg = `${t('syncFailed')} [${r.error}]`;
-    else {
+    else if (r.error) {
+      syncMsg = `${t('syncFailed')} [${r.error}]`;
+      connected = await isConnected(); // sync dropped the connection on failure
+    } else {
       syncMsg = t('syncDone', { count: r.merged ?? 0 });
       lastSync = await getSyncLast();
     }
@@ -203,3 +208,5 @@
   {#if logEntries.length === 0}{t('debugEmpty')}{:else}{#each logEntries as e, i (i)}{new Date(e.t).toLocaleTimeString()}  {e.m}
 {/each}{/if}
 </div>
+
+<p class="sub" style="text-align:center;margin-top:14px">{t('versionTitle')} {appVersion}</p>

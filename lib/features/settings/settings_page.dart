@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saf_util/saf_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,9 +13,9 @@ import '../../core/crypto/passphrase_crypto.dart' show BackupAuthException;
 import '../../core/debug/debug_log.dart';
 import '../../core/platform/secure_screen.dart';
 import '../../core/providers.dart';
-import '../tokens/trash_page.dart';
 import '../../l10n/app_localizations.dart';
 import '../tokens/token_providers.dart';
+import '../tokens/trash_page.dart';
 import 'locale_controller.dart';
 import 'settings_repository.dart';
 
@@ -27,8 +28,13 @@ final _syncPassSetProvider = FutureProvider<bool>((ref) async =>
         .isNotEmpty);
 final _syncProviderProvider = FutureProvider<String>(
     (ref) => ref.watch(settingsRepositoryProvider).getSyncProvider());
-final _driveEmailProvider = FutureProvider<String?>(
+// autoDispose: re-checks the connection each time Settings opens, so a sync
+// failure that disconnected Drive is reflected without an app restart.
+final _driveEmailProvider = FutureProvider.autoDispose<String?>(
     (ref) => ref.watch(driveAuthServiceProvider).currentEmail());
+
+final _versionProvider = FutureProvider<String>((ref) async =>
+    (await PackageInfo.fromPlatform()).version);
 
 final _intervalProvider = FutureProvider<NoExpiryWarnInterval>((ref) =>
     ref.watch(settingsRepositoryProvider).getNoExpiryInterval());
@@ -302,6 +308,12 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: Text(l.versionTitle),
+              subtitle: Text(ref.watch(_versionProvider).valueOrNull ?? '—'),
+            ),
           ],
         ),
       ),
@@ -393,6 +405,9 @@ class SettingsPage extends ConsumerWidget {
     } catch (_) {
       if (!context.mounted) return;
       m.hideCurrentSnackBar();
+      // The controller drops the Drive connection on a non-passphrase failure;
+      // refresh the connect tile so it shows "not connected" → reconnect.
+      ref.invalidate(_driveEmailProvider);
       m.showSnackBar(SnackBar(content: Text(l.syncResultFailed)));
     }
   }

@@ -27,10 +27,31 @@ class AppLocalizationsJa extends AppLocalizations {
   String get listTitle => 'トークン保管庫';
 
   @override
+  String get searchHint => '名前 / サイト / メモを検索';
+
+  @override
+  String get searchNoResults => '結果なし';
+
+  @override
   String get sortExpiry => '有効期限が近い順';
 
   @override
   String get sortName => 'サービス名順';
+
+  @override
+  String get sortBy => '並び替え';
+
+  @override
+  String get sortCreated => '作成日順';
+
+  @override
+  String get sortSite => 'サイト順';
+
+  @override
+  String get sortAsc => '昇順';
+
+  @override
+  String get sortDesc => '降順';
 
   @override
   String get sortUpdated => '最近更新順';
@@ -196,6 +217,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsTitle => '設定';
+
+  @override
+  String get versionTitle => 'バージョン';
 
   @override
   String get noExpiryWarnTitle => '無期限トークンの警告間隔';

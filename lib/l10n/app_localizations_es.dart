@@ -27,10 +27,31 @@ class AppLocalizationsEs extends AppLocalizations {
   String get listTitle => 'Bóveda de tokens';
 
   @override
+  String get searchHint => 'Buscar nombre / sitio / nota';
+
+  @override
+  String get searchNoResults => 'Sin resultados';
+
+  @override
   String get sortExpiry => 'Caducan antes';
 
   @override
   String get sortName => 'Nombre del servicio';
+
+  @override
+  String get sortBy => 'Ordenar por';
+
+  @override
+  String get sortCreated => 'Por creación';
+
+  @override
+  String get sortSite => 'Por sitio';
+
+  @override
+  String get sortAsc => 'Ascendente';
+
+  @override
+  String get sortDesc => 'Descendente';
 
   @override
   String get sortUpdated => 'Actualizados recientemente';
@@ -201,6 +222,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Ajustes';
+
+  @override
+  String get versionTitle => 'Versión';
 
   @override
   String get noExpiryWarnTitle => 'Intervalo de aviso sin caducidad';

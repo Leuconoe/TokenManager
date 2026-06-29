@@ -35,6 +35,9 @@ class DesktopDriveAuthService implements DriveAuth {
 
   @override
   Future<String?> signIn() async {
+    // Reconnect: drop any stale cached credentials so this always runs a fresh
+    // browser consent (a broken refresh token can't be recovered otherwise).
+    await signOut();
     final api = await driveApi(interactive: true);
     return api == null ? null : 'Google Drive';
   }
