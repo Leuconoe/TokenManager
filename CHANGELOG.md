@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.9
+
+- Test-target release for verifying the v1.0.8 Windows auto-update fix (no
+  functional changes).
+
 ## v1.0.8
 
 - **Fix: Windows auto-update now actually runs.** The updater launched its helper
