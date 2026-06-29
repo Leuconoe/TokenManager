@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.8
+
+- **Fix: Windows auto-update now actually runs.** The updater launched its helper
+  with `Process.start(detached)`, which did not reliably spawn the process — the
+  app closed but nothing downloaded/installed. It now launches via `cmd /c start`,
+  verified to survive the app exiting and complete the download/extract/install.
+
 ## v1.0.7
 
 - Test release to exercise the Windows auto-update flow (no functional changes

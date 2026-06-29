@@ -27,10 +27,13 @@ class WindowsUpdater {
         workDir: work.path,
       ));
       dlog('update: launching Windows updater helper');
+      // Launch via `cmd /c start` so the helper is fully spawned-and-forgotten
+      // by the shell and survives this app exiting. (Process.start with
+      // ProcessStartMode.detached on powershell does NOT reliably run the child.)
       await Process.start(
-        'powershell',
-        ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden',
-         '-File', script.path],
+        'cmd',
+        ['/c', 'start', '', '/min', 'powershell', '-NoProfile',
+         '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', script.path],
         mode: ProcessStartMode.detached,
       );
     } catch (e) {
