@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.5
+
+- **Release builds now include Google Drive sync** out of the box — CI injects
+  the OAuth client id/secret from repository secrets, so the distributed Windows
+  app and Chrome extension can connect to Drive without a local build. (No code
+  change from v1.0.4; this is the first release built with the secrets.)
+
 ## v1.0.4
 
 - **Windows auto-update**: when an update is available, Windows offers

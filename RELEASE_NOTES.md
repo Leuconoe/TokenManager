@@ -1,10 +1,11 @@
-# TokenManager v1.0.4
+# TokenManager v1.0.5
 
 **An offline-first vault that never stores token values.** It records only the *metadata* of your API tokens / keys — service name, URL, issued/expiry dates, a note — and reminds you to rotate or revoke them before they expire. Available on **Android**, **Windows**, and as a **Chrome extension**.
 
-## 🆕 New in v1.0.4
+## 🆕 New in v1.0.5
 
-- **Windows auto-update** — when an update is available, choose "Update & restart" and the app downloads, installs, and relaunches itself (no manual unzip). *(Takes effect from the next release onward.)*
+- **Google Drive sync works in the downloaded builds** — the Windows app and Chrome extension can now connect to Drive without building from source.
+- **Windows auto-update** — when an update is available, choose "Update & restart" and the app downloads, installs, and relaunches itself (no manual unzip). This is the first release the Windows app can auto-update *from*.
 - **Search** the list by title / site / note.
 - **Sort** by expiry / created / name / site, ascending or descending (remembered).
 - **Trash (recycle bin)** — restore or permanently delete soft-deleted tokens, with a bulk *empty trash*; tombstones auto-clear after 30 days.
