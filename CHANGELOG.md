@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.7
+
+- Test release to exercise the Windows auto-update flow (no functional changes
+  from v1.0.6).
+
 ## v1.0.6
 
 - **Windows auto-update hardening**: the update helper now forces TLS 1.2 (Windows

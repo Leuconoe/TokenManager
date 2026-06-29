@@ -1,8 +1,10 @@
-# TokenManager v1.0.6
+# TokenManager v1.0.7
 
 **An offline-first vault that never stores token values.** It records only the *metadata* of your API tokens / keys — service name, URL, issued/expiry dates, a note — and reminds you to rotate or revoke them before they expire. Available on **Android**, **Windows**, and as a **Chrome extension**.
 
-## 🆕 In v1.0.6
+> Test release to verify the Windows auto-update flow. No functional changes from v1.0.6.
+
+## 🆕 Recent
 
 - **More reliable Windows auto-update** — the updater now forces TLS 1.2 (older Windows PowerShell otherwise can't download from GitHub) and logs each step to `%TEMP%\tokenmanager_update\update.log`.
 - **Google Drive sync works in the downloaded builds** — the Windows app and Chrome extension connect to Drive without building from source.
