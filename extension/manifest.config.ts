@@ -5,7 +5,7 @@ import { defineManifest } from '@crxjs/vite-plugin';
 export default defineManifest({
   manifest_version: 3,
   name: 'TokenManager',
-  version: '1.0.2',
+  version: '1.0.5',
   description:
     'Offline token-metadata vault — track token expiry, never store token values.',
   // Pins the extension ID to a fixed value so the OAuth redirect URI

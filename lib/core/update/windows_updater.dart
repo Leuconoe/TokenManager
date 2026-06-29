@@ -54,20 +54,31 @@ class WindowsUpdater {
   }) {
     String q(String s) => "'${s.replaceAll("'", "''")}'";
     return '''
-\$ErrorActionPreference = 'Stop'
 \$ProgressPreference = 'SilentlyContinue'
+\$log = Join-Path ${q(workDir)} 'update.log'
+function Log(\$m) { "\$(Get-Date -Format o)  \$m" | Out-File -FilePath \$log -Append -Encoding utf8 }
+Log "helper start pid=$myPid"
+# Windows PowerShell 5.1 defaults to TLS 1.0/1.1; GitHub requires TLS 1.2.
+try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 try { Wait-Process -Id $myPid -Timeout 120 } catch {}
 Start-Sleep -Seconds 1
 \$zip = Join-Path ${q(workDir)} 'update.zip'
 \$new = Join-Path ${q(workDir)} 'new'
+\$ok = \$false
 try {
-  Invoke-WebRequest -Uri ${q(zipUrl)} -OutFile \$zip
+  Log "download ${q(zipUrl)}"
+  Invoke-WebRequest -Uri ${q(zipUrl)} -OutFile \$zip -UseBasicParsing
+  Log "downloaded \$((Get-Item \$zip).Length) bytes; extracting"
   if (Test-Path \$new) { Remove-Item -Recurse -Force \$new }
   Expand-Archive -Path \$zip -DestinationPath \$new -Force
+  Log "copying to ${q(installDir)}"
   Copy-Item -Path (Join-Path \$new '*') -Destination ${q(installDir)} -Recurse -Force
+  \$ok = \$true
+  Log "install OK"
 } catch {
-  # On failure just relaunch the existing version.
+  Log "ERROR \$(\$_.Exception.Message)"
 }
+Log "relaunch (updated=\$ok)"
 Start-Process -FilePath ${q(exePath)}
 ''';
   }

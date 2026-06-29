@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.6
+
+- **Windows auto-update hardening**: the update helper now forces TLS 1.2 (Windows
+  PowerShell 5.1 otherwise fails to download from GitHub) and writes a step-by-step
+  log to `%TEMP%\tokenmanager_update\update.log` for diagnosing failed updates.
+- Extension manifest version bumped to match the release.
+
 ## v1.0.5
 
 - **Release builds now include Google Drive sync** out of the box — CI injects
